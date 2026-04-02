@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Facture Vente #{{ facture.id }}{% endblock %}
+{% block body %}
+<div class="card"><div class="card-body">
+<p>Client: <strong>{{ facture.client }}</strong> ({{ facture.numeroClient }})</p>
+<p>Date: {{ facture.dateVente|date('Y-m-d') }}</p>
+<table class="table"><thead><tr><th>ID</th><th>Race</th><th>Genre</th><th>Age</th><th>Prix</th></tr></thead><tbody>
+{% for m in facture.moutons %}<tr><td>{{ m.id }}</td><td>{{ m.race }}</td><td>{{ m.genre }}</td><td>{{ m.currentAge }}</td><td>{{ m.prix|number_format(2) }}</td></tr>{% endfor %}
+</tbody></table>
+<h4>Total: {{ facture.montantTotal|number_format(2) }} TND</h4>
+</div></div>
+{% endblock %}

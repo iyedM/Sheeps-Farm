@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Granges{% endblock %}
+{% block body %}
+<div class="mb-3"><a href="{{ path('app_grange_new') }}" class="btn btn-success">Nouvelle grange</a></div>
+<div class="alert alert-info">Total: {{ stats.total }} | Actives: {{ stats.actives }}</div>
+<table class="table datatable"><thead><tr><th>ID</th><th>Nom</th><th>Localisation</th><th></th></tr></thead><tbody>
+{% for g in pagination %}<tr><td>{{ g.id }}</td><td>{{ g.nom }}</td><td>{{ g.localisation }}</td><td>
+<a class="btn btn-sm btn-secondary" href="{{ path('app_grange_show',{id:g.id}) }}">Voir</a>
+<a class="btn btn-sm btn-primary" href="{{ path('app_grange_edit',{id:g.id}) }}">Edit</a>
+<form class="d-inline delete-form" method="post" action="{{ path('app_grange_delete',{id:g.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_grange_'~g.id) }}"><button class="btn btn-sm btn-danger">Del</button></form>
+</td></tr>{% endfor %}
+</tbody></table>
+{{ knp_pagination_render(pagination) }}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Nouvelle Facture Achat{% endblock %}
+{% block body %}
+<div class="card"><div class="card-body">
+{{ form_start(form) }}
+{{ form_row(form.fournisseur) }}
+{{ form_row(form.dateAchat) }}
+<h5>Sous-lots</h5>
+<div data-collection-holder data-prototype="{{ form_widget(form.sousLots.vars.prototype)|e('html_attr') }}">
+	{% for sousLotForm in form.sousLots %}
+		<div class="border rounded p-2 mb-2">{{ form_row(sousLotForm) }}</div>
+	{% endfor %}
+</div>
+<button type="button" class="btn btn-outline-primary my-2" id="add-row">Ajouter ligne</button><br>
+<button class="btn btn-success">Enregistrer</button>
+{{ form_end(form) }}
+</div></div>
+{% endblock %}

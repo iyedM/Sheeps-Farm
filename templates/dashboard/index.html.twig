@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Dashboard{% endblock %}
+{% block body %}
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Total Moutons</h6><h3>{{ totalMoutons }}</h3></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Vendus</h6><h3>{{ vendus }}</h3></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Non Vendus</h6><h3>{{ nonVendus }}</h3></div></div></div>
+    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Valeur Cheptel</h6><h3>{{ valeurCheptel|number_format(2, '.', ' ') }} TND</h3></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartGenre" data-chart='{{ genreData|json_encode }}'></canvas></div></div></div>
+    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartRace" data-chart='{{ raceData|json_encode }}'></canvas></div></div></div>
+    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartOrigine" data-chart='{{ origineData|json_encode }}'></canvas></div></div></div>
+    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartGrange" data-chart='{{ grangeData|json_encode }}'></canvas></div></div></div>
+    <div class="col-12"><div class="card"><div class="card-body"><canvas id="chartEvolution" data-chart='{{ evolutionData|json_encode }}'></canvas></div></div></div>
+</div>
+{% endblock %}

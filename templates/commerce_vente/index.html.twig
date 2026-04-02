@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Commerce Vente{% endblock %}
+{% block body %}
+<a href="{{ path('app_commerce_vente_new') }}" class="btn btn-success mb-3">Nouvelle vente</a>
+<table class="table datatable"><thead><tr><th>Client</th><th>Race</th><th>Qte</th><th>Total</th><th></th></tr></thead><tbody>
+{% for v in pagination %}<tr><td>{{ v.client }}</td><td>{{ v.race }}</td><td>{{ v.quantite }}</td><td>{{ v.prixTotal|number_format(2) }}</td><td>
+<a class="btn btn-sm btn-primary" href="{{ path('app_commerce_vente_edit',{id:v.id}) }}">Edit</a>
+<form class="d-inline delete-form" method="post" action="{{ path('app_commerce_vente_delete',{id:v.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_vente_'~v.id) }}"><button class="btn btn-sm btn-danger">Del</button></form>
+</td></tr>{% endfor %}</tbody></table>
+{{ knp_pagination_render(pagination) }}
+{% endblock %}

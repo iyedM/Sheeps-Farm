@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Moutons{% endblock %}
+{% block body %}
+<div class="card mb-3"><div class="card-body">
+<form method="get" class="row g-2">
+    <div class="col"><input name="race" value="{{ filters.race }}" placeholder="Race" class="form-control"></div>
+    <div class="col"><input name="genre" value="{{ filters.genre }}" placeholder="Genre" class="form-control"></div>
+    <div class="col"><input name="origine" value="{{ filters.origine }}" placeholder="Origine" class="form-control"></div>
+    <div class="col"><button class="btn btn-primary">Filtrer</button></div>
+    <div class="col text-end"><a class="btn btn-success" href="{{ path('app_mouton_new') }}">Nouveau</a></div>
+</form>
+</div></div>
+<div class="card"><div class="card-body">
+<table class="table datatable">
+<thead><tr><th>ID</th><th>Race</th><th>Genre</th><th>Age</th><th>Grange</th><th>Actions</th></tr></thead>
+<tbody>
+{% for mouton in pagination %}
+<tr>
+<td>{{ mouton.id }}</td><td>{{ mouton.race }}</td><td>{{ mouton.genre }}</td><td>{{ mouton.currentAge }}</td><td>{{ mouton.grange.nom }}</td>
+<td>
+<a href="{{ path('app_mouton_show', {id:mouton.id}) }}" class="btn btn-sm btn-secondary">Voir</a>
+<a href="{{ path('app_mouton_edit', {id:mouton.id}) }}" class="btn btn-sm btn-primary">Edit</a>
+<form method="post" action="{{ path('app_mouton_delete', {id:mouton.id}) }}" class="d-inline delete-form">
+<input type="hidden" name="_token" value="{{ csrf_token('delete_mouton_' ~ mouton.id) }}"><button class="btn btn-sm btn-danger">Del</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+</tbody></table>
+{{ knp_pagination_render(pagination) }}
+</div></div>
+{% endblock %}

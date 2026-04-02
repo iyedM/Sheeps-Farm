@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Dépenses{% endblock %}
+{% block body %}
+<div class="d-flex justify-content-between mb-3"><div class="alert alert-warning mb-0">Total: {{ total|number_format(2, '.', ' ') }} TND</div><a href="{{ path('app_depense_new') }}" class="btn btn-success">Nouvelle dépense</a></div>
+<table class="table datatable"><thead><tr><th>Date</th><th>Description</th><th>Montant</th><th></th></tr></thead><tbody>
+{% for d in pagination %}<tr><td>{{ d.date|date('Y-m-d') }}</td><td>{{ d.description }}</td><td>{{ d.montant|number_format(2) }}</td><td>
+<a class="btn btn-sm btn-primary" href="{{ path('app_depense_edit',{id:d.id}) }}">Edit</a>
+<form class="d-inline delete-form" method="post" action="{{ path('app_depense_delete',{id:d.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_depense_'~d.id) }}"><button class="btn btn-sm btn-danger">Del</button></form>
+</td></tr>{% endfor %}</tbody></table>
+{{ knp_pagination_render(pagination) }}
+{% endblock %}

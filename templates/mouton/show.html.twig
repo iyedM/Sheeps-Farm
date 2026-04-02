@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Mouton #{{ mouton.id }}{% endblock %}
+{% block body %}
+<div class="row g-3">
+<div class="col-md-6"><div class="card"><div class="card-body">
+<h5>Détails</h5>
+<ul>
+<li>Race: {{ mouton.race }}</li><li>Genre: {{ mouton.genre }}</li><li>Age: {{ mouton.currentAge }}</li>
+<li>Origine: {{ mouton.origine }}</li><li>Prix: {{ mouton.prix }}</li>
+</ul>
+</div></div></div>
+<div class="col-md-6"><div class="card"><div class="card-body">
+<h5>Vaccins</h5>
+<a class="btn btn-sm btn-success mb-2" href="{{ path('app_vaccin_new', {moutonId:mouton.id}) }}">Ajouter vaccin</a>
+<ul>{% for v in mouton.vaccins %}<li>{{ v.nom }} - {{ v.dateVaccination|date('Y-m-d') }}
+<a href="{{ path('app_vaccin_edit', {moutonId:mouton.id,id:v.id}) }}">Edit</a>
+<form class="d-inline delete-form" method="post" action="{{ path('app_vaccin_delete', {moutonId:mouton.id,id:v.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_vaccin_'~v.id) }}"><button class="btn btn-sm btn-link text-danger">Suppr</button></form>
+</li>{% endfor %}</ul>
+<h5>Infos</h5>
+<a class="btn btn-sm btn-success mb-2" href="{{ path('app_infos_new', {moutonId:mouton.id}) }}">Ajouter info</a>
+<ul>{% for i in mouton.infos %}<li>{{ i.description }}
+<a href="{{ path('app_infos_edit', {moutonId:mouton.id,id:i.id}) }}">Edit</a>
+<form class="d-inline delete-form" method="post" action="{{ path('app_infos_delete', {moutonId:mouton.id,id:i.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_infos_'~i.id) }}"><button class="btn btn-sm btn-link text-danger">Suppr</button></form>
+</li>{% endfor %}</ul>
+</div></div></div>
+</div>
+{% endblock %}

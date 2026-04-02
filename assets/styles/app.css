@@ -1,0 +1,41 @@
+:root {
+    --primary: #1B2A41;
+    --primary-light: #243B55;
+    --accent: #2ECC71;
+    --accent-dark: #27AE60;
+    --danger: #E74C3C;
+    --warning: #F39C12;
+    --text-light: #ECF0F1;
+    --card-bg: #FFFFFF;
+    --body-bg: #F4F6F9;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+body {
+    background: var(--body-bg);
+}
+
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar {
+    width: 260px;
+    background: var(--primary);
+    color: var(--text-light);
+    padding: 1rem;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+}
+.app-main { margin-left: 260px; width: calc(100% - 260px); }
+.brand { font-size: 1.3rem; font-weight: 700; }
+.app-sidebar .nav-link { color: var(--text-light); border-radius: 8px; margin-bottom: .25rem; }
+.app-sidebar .nav-link:hover { background: var(--primary-light); }
+.card { border: 0; border-radius: 14px; box-shadow: var(--shadow); background: var(--card-bg); }
+.stat-card { border-left: 4px solid var(--accent); transition: transform .2s ease; }
+.stat-card:hover { transform: translateY(-3px); }
+.btn-success { background: var(--accent); border-color: var(--accent); }
+.btn-success:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+@media (max-width: 992px) {
+    .app-sidebar { position: static; width: 100%; }
+    .app-main { margin-left: 0; width: 100%; }
+}

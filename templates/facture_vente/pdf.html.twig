@@ -1,0 +1,11 @@
+<!doctype html><html><body style="font-family: DejaVu Sans; font-size: 12px;">
+<h2>FermeApp - Facture Vente #{{ facture.id }}</h2>
+<p>Date: {{ facture.dateVente|date('Y-m-d') }}</p>
+<p>Client: {{ facture.client }} | Numéro: {{ facture.numeroClient }}</p>
+<table width="100%" border="1" cellspacing="0" cellpadding="5">
+<tr><th>Mouton ID</th><th>Race</th><th>Genre</th><th>Age</th><th>Prix</th></tr>
+{% for m in facture.moutons %}<tr><td>{{ m.id }}</td><td>{{ m.race }}</td><td>{{ m.genre }}</td><td>{{ m.currentAge }}</td><td>{{ m.prix|number_format(2) }}</td></tr>{% endfor %}
+</table>
+<p style="text-align:right;">Prix additionnel: {{ facture.prixAdditionnel|number_format(2) }} TND</p>
+<p style="text-align:right;font-weight:bold;">TOTAL: {{ facture.montantTotal|number_format(2) }} TND</p>
+</body></html>

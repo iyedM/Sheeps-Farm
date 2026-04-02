@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block page_title %}Facture Achat #{{ facture.id }}{% endblock %}
+{% block body %}
+<div class="card"><div class="card-body">
+<p>Fournisseur: <strong>{{ facture.fournisseur }}</strong></p>
+<p>Date: {{ facture.dateAchat|date('Y-m-d') }}</p>
+<table class="table"><thead><tr><th>Race</th><th>Age</th><th>Genre</th><th>Qte</th><th>PU</th><th>Sous-total</th></tr></thead><tbody>
+{% for s in facture.sousLots %}<tr><td>{{ s.race }}</td><td>{{ s.age }}</td><td>{{ s.genre }}</td><td>{{ s.quantite }}</td><td>{{ s.prix }}</td><td>{{ s.sousTotal }}</td></tr>{% endfor %}
+</tbody></table>
+<h4>Total: {{ facture.totalGlobal|number_format(2) }} TND</h4>
+</div></div>
+{% endblock %}

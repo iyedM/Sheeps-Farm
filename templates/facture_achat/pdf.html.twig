@@ -1,0 +1,10 @@
+<!doctype html><html><body style="font-family: DejaVu Sans; font-size: 12px;">
+<h2>FermeApp - Facture Achat #{{ facture.id }}</h2>
+<p>Date: {{ facture.dateAchat|date('Y-m-d') }}</p>
+<p>Fournisseur: {{ facture.fournisseur }}</p>
+<table width="100%" border="1" cellspacing="0" cellpadding="5">
+<tr><th>Race</th><th>Age</th><th>Genre</th><th>Quantité</th><th>Prix unitaire</th><th>Sous-total</th></tr>
+{% for s in facture.sousLots %}<tr><td>{{ s.race }}</td><td>{{ s.age }}</td><td>{{ s.genre }}</td><td>{{ s.quantite }}</td><td>{{ s.prix|number_format(2) }}</td><td>{{ s.sousTotal|number_format(2) }}</td></tr>{% endfor %}
+</table>
+<p style="text-align:right;font-weight:bold;">TOTAL GLOBAL: {{ facture.totalGlobal|number_format(2) }} TND</p>
+</body></html>
