@@ -2,7 +2,7 @@
 {% block page_title %}Factures Vente{% endblock %}
 {% block body %}
 <a href="{{ path('app_facture_vente_new') }}" class="btn btn-success mb-3">Nouvelle facture</a>
-<table class="table datatable"><thead><tr><th>ID</th><th>Client</th><th>Date</th><th>Total</th><th></th></tr></thead><tbody>
+<table class="table datatable" data-server-pagination="1"><thead><tr><th>ID</th><th>Client</th><th>Date</th><th>Total</th><th></th></tr></thead><tbody>
 {% for f in pagination %}<tr><td>{{ f.id }}</td><td>{{ f.client }}</td><td>{{ f.dateVente|date('Y-m-d') }}</td><td>{{ f.montantTotal|number_format(2) }}</td><td>
 <a class="btn btn-sm btn-secondary" href="{{ path('app_facture_vente_show',{id:f.id}) }}">Voir</a>
 <a class="btn btn-sm btn-dark" href="{{ path('app_facture_vente_pdf',{id:f.id}) }}" target="_blank">PDF</a>

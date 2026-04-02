@@ -1,19 +1,70 @@
-{% extends 'base.html.twig' %}
-{% block title %}Inscription{% endblock %}
-{% block guest_body %}
-<div class="container py-5"><div class="row justify-content-center"><div class="col-md-6">
-    <div class="card shadow-sm"><div class="card-body">
-        <h4 class="mb-3">Inscription</h4>
-        {{ form_start(form) }}
-        <div class="row g-3">
-            <div class="col-md-6">{{ form_row(form.nom) }}</div>
-            <div class="col-md-6">{{ form_row(form.prenom) }}</div>
-            <div class="col-12">{{ form_row(form.email) }}</div>
-            <div class="col-md-6">{{ form_row(form.plainPassword) }}</div>
-            <div class="col-md-6">{{ form_row(form.confirmPassword) }}</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inscription | FermeApp</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    {{ encore_entry_link_tags('app') }}
+</head>
+<body>
+<div class="min-vh-100 d-flex">
+    <section class="d-none d-md-flex flex-column justify-content-center px-5" style="width:50%; background:#1B2A41; color:#fff;">
+        <div style="max-width:420px">
+            <svg viewBox="0 0 120 120" width="120" height="120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-4">
+                <path d="M35 60c0-14 11-25 25-25s25 11 25 25-11 25-25 25H45c-11 0-20-9-20-20 0-8 5-15 12-18" fill="#ECF0F1"/>
+                <circle cx="48" cy="56" r="3" fill="#1B2A41"/>
+            </svg>
+            <h1 style="font-size:32px; font-weight:600">FermeApp</h1>
+            <p style="color:#B8C5D6">Créez un compte pour suivre les moutons, ventes, achats et factures dans une expérience unifiée.</p>
         </div>
-        <button class="btn btn-success mt-3">Créer le compte</button>
-        {{ form_end(form) }}
-    </div></div>
-</div></div></div>
-{% endblock %}
+    </section>
+
+    <section class="d-flex align-items-center justify-content-center px-4" style="width:100%; background:#fff;">
+        <div style="width:100%; max-width:520px;">
+            <h2 class="mb-1" style="font-weight:600; letter-spacing:-.02em">Inscription</h2>
+            <p class="text-secondary mb-4">Créer votre compte FermeApp.</p>
+
+            {{ form_start(form) }}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small text-muted">Nom</label>
+                    {{ form_widget(form.nom, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
+                    {{ form_errors(form.nom) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small text-muted">Prénom</label>
+                    {{ form_widget(form.prenom, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
+                    {{ form_errors(form.prenom) }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted">Email</label>
+                    {{ form_widget(form.email, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small text-muted">Mot de passe</label>
+                    {{ form_widget(form.plainPassword, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
+                    {{ form_errors(form.plainPassword) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small text-muted">Confirmer</label>
+                    {{ form_widget(form.confirmPassword, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
+                    {{ form_errors(form.confirmPassword) }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 mt-4" style="height:48px;">Créer mon compte</button>
+            {{ form_end(form) }}
+
+            <p class="text-center mt-3 mb-0 text-secondary">
+                Déjà inscrit ?
+                <a href="{{ path('app_login') }}" style="color:var(--accent); font-weight:600;">Se connecter</a>
+            </p>
+        </div>
+    </section>
+</div>
+{{ encore_entry_script_tags('app') }}
+</body>
+</html>
