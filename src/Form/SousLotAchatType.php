@@ -21,15 +21,8 @@ class SousLotAchatType extends AbstractType
         $builder
             ->add('race', TextType::class)
             ->add('age', IntegerType::class)
-            ->add('genre', ChoiceType::class, [
-                'choices' => ['Male' => Mouton::GENRE_MALE, 'Femelle' => Mouton::GENRE_FEMELLE],
-            ])
-            ->add('prix', MoneyType::class, ['currency' => 'TND'])
-            ->add('quantite', IntegerType::class)
-            ->add('grange', EntityType::class, [
-                'class' => Grange::class,
-                'choice_label' => 'nom',
-            ]);
+            ->add('prix', MoneyType::class, ['currency' => 'TND', 'label' => 'Prix Unitaire'])
+            ->add('quantite', IntegerType::class, ['label' => 'Têtes']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\CommerceAchat;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -19,8 +21,16 @@ class CommerceAchatType extends AbstractType
             ->add('fournisseur', TextType::class)
             ->add('numeroFournisseur', TextType::class)
             ->add('race', TextType::class)
-            ->add('quantite', IntegerType::class)
+            ->add('quantite', IntegerType::class, ['label' => 'Nombre de têtes'])
             ->add('prixUnitaire', MoneyType::class, ['currency' => 'TND'])
+            ->add('genre', ChoiceType::class, [
+                'choices' => ['Male' => 'Male', 'Femelle' => 'Femelle']
+            ])
+            ->add('age', IntegerType::class, ['label' => 'Age (mois)'])
+            ->add('grange', EntityType::class, [
+                'class' => \App\Entity\Grange::class,
+                'choice_label' => 'nom',
+            ])
             ->add('dateAchat', DateType::class, ['widget' => 'single_text', 'input' => 'datetime_immutable']);
     }
 

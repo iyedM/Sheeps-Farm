@@ -32,8 +32,21 @@ class CommerceAchatController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($achat);
+            
+            // AUTOMATIC STOCKING: Create Mouton entries
+            for ($i = 0; $i < $achat->getQuantite(); $i++) {
+                $mouton = new \App\Entity\Mouton();
+                $mouton->setRace($achat->getRace());
+                $mouton->setAgeInitialMois($achat->getAge());
+                $mouton->setGenre($achat->getGenre());
+                $mouton->setPrix($achat->getPrixUnitaire());
+                $mouton->setGrange($achat->getGrange());
+                $mouton->setOrigine(\App\Entity\Mouton::ORIGINE_EXTERNE);
+                $em->persist($mouton);
+            }
+
             $em->flush();
-            $this->addFlash('success', 'Achat ajouté.');
+            $this->addFlash('success', sprintf('%d moutons ajoutés au stock.', $achat->getQuantite()));
             return $this->redirectToRoute('app_commerce_achat_index');
         }
         return $this->render('commerce_achat/new.html.twig', ['form' => $form]);

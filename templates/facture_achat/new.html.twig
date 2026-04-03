@@ -11,26 +11,20 @@
         <div class="sublot-number-circle">{{ (form.vars.name|default(0) | number_format) + 1 }}</div>
         <div class="sublot-fields w-100">
             <div class="row g-2 align-items-center m-0">
-                <div class="col-md-2" title="Race">
+                <div class="col-md-4" title="Race">
                     {{ form_widget(form.race, {'attr': {'class': 'form-control form-control-sm', 'placeholder': 'Race'}}) }}
                 </div>
-                <div class="col-md-1" title="Âge">
+                <div class="col-md-2" title="Âge">
                     {{ form_widget(form.age, {'attr': {'class': 'form-control form-control-sm', 'placeholder': 'Âge'}}) }}
                 </div>
-                <div class="col-md-2" title="Genre">
-                    {{ form_widget(form.genre, {'attr': {'class': 'form-select form-select-sm'}}) }}
-                </div>
-                <div class="col-md-2" title="Prix">
+                <div class="col-md-3" title="Prix Unitaire">
                     <div class="input-group input-group-sm">
                         {{ form_widget(form.prix, {'attr': {'class': 'form-control item-prix', 'placeholder': 'Prix'}}) }}
                         <span class="input-group-text py-0 px-2" style="font-size:10px;">TND</span>
                     </div>
                 </div>
-                <div class="col-md-2" title="Quantité">
+                <div class="col-md-3" title="Nombre de têtes">
                     {{ form_widget(form.quantite, {'attr': {'class': 'form-control form-control-sm item-qty', 'placeholder': 'Qté'}}) }}
-                </div>
-                <div class="col-md-3" title="Grange">
-                    {{ form_widget(form.grange, {'attr': {'class': 'form-select form-select-sm'}}) }}
                 </div>
                 <div style="display:none">{{ form_rest(form) }}</div>
             </div>
@@ -92,12 +86,10 @@
                             <div style="width: 40px; text-align: center;">#</div>
                             <div class="flex-grow-1 px-2">
                                 <div class="row g-2 m-0 p-0">
-                                    <div class="col-md-2 small fw-bold">RACE</div>
-                                    <div class="col-md-1 small fw-bold">ÂGE</div>
-                                    <div class="col-md-2 small fw-bold">GENRE</div>
-                                    <div class="col-md-2 small fw-bold">PRIX UNIT.</div>
-                                    <div class="col-md-2 small fw-bold">QTÉ</div>
-                                    <div class="col-md-3 small fw-bold">AFFECTATION</div>
+                                    <div class="col-md-4 small fw-bold">RACE</div>
+                                    <div class="col-md-2 small fw-bold">ÂGE</div>
+                                    <div class="col-md-3 small fw-bold">PRIX UNIT.</div>
+                                    <div class="col-md-3 small fw-bold">TÊTES</div>
                                 </div>
                             </div>
                             <div style="width: 30px;"></div>

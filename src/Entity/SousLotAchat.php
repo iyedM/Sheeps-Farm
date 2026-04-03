@@ -23,9 +23,7 @@ class SousLotAchat
     #[Assert\Range(min: 0, max: 120)]
     private ?int $age = null;
 
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank]
-    #[Assert\Choice(choices: [Mouton::GENRE_MALE, Mouton::GENRE_FEMELLE])]
+    #[ORM\Column(length: 20, nullable: true)]
     private ?string $genre = null;
 
     #[ORM\Column]
@@ -39,7 +37,7 @@ class SousLotAchat
     private ?int $quantite = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Grange $grange = null;
 
     #[ORM\ManyToOne(inversedBy: 'sousLots')]
