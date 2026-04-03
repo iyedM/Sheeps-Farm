@@ -1,27 +1,197 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Mouton #{{ mouton.id }}{% endblock %}
+
+{% block title %}Détails Mouton #{{ mouton.id }} - FermeApp{% endblock %}
+{% block breadcrumb_current %}Moutons > Détails{% endblock %}
+
 {% block body %}
-<div class="row g-3">
-<div class="col-md-6"><div class="card"><div class="card-body">
-<h5>Détails</h5>
-<ul>
-<li>Race: {{ mouton.race }}</li><li>Genre: {{ mouton.genre }}</li><li>Age: {{ mouton.currentAge }}</li>
-<li>Origine: {{ mouton.origine }}</li><li>Prix: {{ mouton.prix }}</li>
-</ul>
-</div></div></div>
-<div class="col-md-6"><div class="card"><div class="card-body">
-<h5>Vaccins</h5>
-<a class="btn btn-sm btn-success mb-2" href="{{ path('app_vaccin_new', {moutonId:mouton.id}) }}">Ajouter vaccin</a>
-<ul>{% for v in mouton.vaccins %}<li>{{ v.nom }} - {{ v.dateVaccination|date('Y-m-d') }}
-<a href="{{ path('app_vaccin_edit', {moutonId:mouton.id,id:v.id}) }}">Edit</a>
-<form class="d-inline delete-form" method="post" action="{{ path('app_vaccin_delete', {moutonId:mouton.id,id:v.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_vaccin_'~v.id) }}"><button class="btn btn-sm btn-link text-danger">Suppr</button></form>
-</li>{% endfor %}</ul>
-<h5>Infos</h5>
-<a class="btn btn-sm btn-success mb-2" href="{{ path('app_infos_new', {moutonId:mouton.id}) }}">Ajouter info</a>
-<ul>{% for i in mouton.infos %}<li>{{ i.description }}
-<a href="{{ path('app_infos_edit', {moutonId:mouton.id,id:i.id}) }}">Edit</a>
-<form class="d-inline delete-form" method="post" action="{{ path('app_infos_delete', {moutonId:mouton.id,id:i.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_infos_'~i.id) }}"><button class="btn btn-sm btn-link text-danger">Suppr</button></form>
-</li>{% endfor %}</ul>
-</div></div></div>
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Mouton #{{ mouton.id }}</h1>
+        <p class="page-subtitle">Fiche détaillée et historique médical</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_mouton_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+        <a href="{{ path('app_mouton_edit', {id: mouton.id}) }}" class="btn-primary">
+            <i class="bi bi-pencil-fill"></i> Modifier
+        </a>
+    </div>
+</div>
+
+<div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+    <!-- Colonne de Gauche : Infos Générales -->
+    <div class="col-lg-4">
+        <div class="form-card" style="height: 100%;">
+            <div class="form-card-header d-flex align-items-center gap-3">
+                <div class="stat-icon" style="--icon-bg: var(--bg-hover); --icon-color: var(--accent); width: 48px; height: 48px;">
+                    <i class="bi bi-clipboard-data"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 16px;">Identité</h3>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Attributs du cheptel</p>
+                </div>
+            </div>
+            <div class="form-card-body" style="padding-top: 0;">
+                <ul class="list-unstyled mb-0" style="display: flex; flex-direction: column; gap: 16px;">
+                    <li class="d-flex justify-content-between align-items-center border-bottom pb-2" style="border-color: var(--card-border) !important;">
+                        <span class="text-muted small">Race</span>
+                        <strong style="color: var(--text-primary);">{{ mouton.race }}</strong>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center border-bottom pb-2" style="border-color: var(--card-border) !important;">
+                        <span class="text-muted small">Genre</span>
+                        {% if mouton.genre|lower == 'mâle' or mouton.genre|lower == 'male' %}
+                            <span class="badge-status badge-male">Mâle</span>
+                        {% else %}
+                            <span class="badge-status badge-femelle">Femelle</span>
+                        {% endif %}
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center border-bottom pb-2" style="border-color: var(--card-border) !important;">
+                        <span class="text-muted small">Âge actuel</span>
+                        <strong style="color: var(--text-primary);">{{ mouton.currentAge }} mois</strong>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center border-bottom pb-2" style="border-color: var(--card-border) !important;">
+                        <span class="text-muted small">Origine</span>
+                        <strong style="color: var(--text-primary);">{{ mouton.origine }}</strong>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center pb-2">
+                        <span class="text-muted small">Prix estimé</span>
+                        <strong style="color: var(--text-primary); font-size: 15px;">{{ mouton.prix|number_format(2, '.', ' ') }} <span style="font-size: 11px; color: var(--text-muted);">TND</span></strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne de Droite : Historique (Vaccins et Infos) -->
+    <div class="col-lg-8 d-flex flex-column gap-4">
+        
+        <!-- Bloc Vaccins -->
+        <div class="table-card mt-0">
+            <div class="table-card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 style="margin-bottom: 4px;"><i class="bi bi-shield-check text-info me-2"></i> Suivi des Vaccins</h3>
+                    <span class="record-count">{{ mouton.vaccins|length }} enregistrement(s)</span>
+                </div>
+                <a class="btn-secondary btn-sm" href="{{ path('app_vaccin_new', {moutonId:mouton.id}) }}">
+                    <i class="bi bi-arrows-fullscreen"></i> Avancé
+                </a>
+            </div>
+
+            <!-- Ajout Rapide -->
+            <div style="padding: 16px 24px; background: rgba(0, 153, 255, 0.03); border-bottom: 1px solid var(--card-border);">
+                {{ form_start(vaccinForm, {attr: {class: 'row gx-2 align-items-center'}}) }}
+                    <div class="col-md-5">
+                        {{ form_widget(vaccinForm.nom, {'attr': {'class': 'form-control form-control-sm', 'placeholder': 'Nom du vaccin...'}}) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_widget(vaccinForm.dateVaccination, {'attr': {'class': 'form-control form-control-sm datepicker', 'placeholder': 'Date'}}) }}
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn-primary btn-sm w-100" style="height: 34px;"><i class="bi bi-plus-lg"></i> Ajouter</button>
+                    </div>
+                {{ form_end(vaccinForm) }}
+            </div>
+
+            <table class="table mb-0" width="100%">
+                <thead style="background: transparent;">
+                    <tr>
+                        <th style="padding-left: 24px;">Nom du vaccin</th>
+                        <th>Date d'administration</th>
+                        <th class="text-end" style="padding-right: 24px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in mouton.vaccins %}
+                        <tr>
+                            <td style="padding-left: 24px; font-weight: 500;">{{ v.nom }}</td>
+                            <td><span class="badge-status" style="background: var(--bg-hover); color: var(--text-secondary); border-radius: var(--radius-sm);"><i class="bi bi-calendar3 me-1"></i> {{ v.dateVaccination|date('d/m/Y') }}</span></td>
+                            <td class="text-end" style="padding-right: 24px;">
+                                <div class="row-actions justify-content-end">
+                                    <a class="action-btn action-edit" title="Modifier" href="{{ path('app_vaccin_edit', {moutonId:mouton.id,id:v.id}) }}">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <form class="d-inline" method="post" action="{{ path('app_vaccin_delete', {moutonId:mouton.id,id:v.id}) }}" id="form-delete-vaccin-{{ v.id }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_vaccin_'~v.id) }}">
+                                        <button type="button" class="action-btn action-delete" title="Supprimer" onclick="confirmDelete('form-delete-vaccin-{{ v.id }}', 'le vaccin {{ v.nom }}')">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted" style="font-size: 13px;">Aucun vaccin enregistré pour le moment.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Bloc Infos Additionnelles -->
+        <div class="table-card mt-0 mb-4">
+            <div class="table-card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 style="margin-bottom: 4px;"><i class="bi bi-journal-text text-warning me-2"></i> Journal & Notes</h3>
+                    <span class="record-count">{{ mouton.infos|length }} observation(s)</span>
+                </div>
+                <a class="btn-secondary btn-sm" href="{{ path('app_infos_new', {moutonId:mouton.id}) }}">
+                    <i class="bi bi-arrows-fullscreen"></i> Avancé
+                </a>
+            </div>
+
+            <!-- Ajout Rapide -->
+            <div style="padding: 16px 24px; background: rgba(255, 140, 0, 0.03); border-bottom: 1px solid var(--card-border);">
+                {{ form_start(infosForm, {attr: {class: 'row gx-2 align-items-center'}}) }}
+                    <div class="col-md-6">
+                        {{ form_widget(infosForm.description, {'attr': {'class': 'form-control form-control-sm', 'placeholder': 'Observation, maladie, pesée...'}}) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_widget(infosForm.dateAjout, {'attr': {'class': 'form-control form-control-sm datepicker', 'placeholder': 'Date'}}) }}
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn-primary btn-sm w-100" style="height: 34px;"><i class="bi bi-plus-lg"></i> Ajouter</button>
+                    </div>
+                {{ form_end(infosForm) }}
+            </div>
+
+            <table class="table mb-0" width="100%">
+                <thead style="background: transparent;">
+                    <tr>
+                        <th style="padding-left: 24px; width: 50%;">Description</th>
+                        <th>Date de la note</th>
+                        <th class="text-end" style="padding-right: 24px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in mouton.infos %}
+                        <tr>
+                            <td style="padding-left: 24px; font-weight: 500; color: var(--text-primary);">{{ i.description }}</td>
+                            <td><span class="badge-status" style="background: var(--bg-hover); color: var(--text-secondary); border-radius: var(--radius-sm);"><i class="bi bi-calendar3 me-1"></i> {{ i.dateAjout|date('d/m/Y') }}</span></td>
+                            <td class="text-end" style="padding-right: 24px;">
+                                <div class="row-actions justify-content-end">
+                                    <a class="action-btn action-edit" title="Modifier" href="{{ path('app_infos_edit', {moutonId:mouton.id,id:i.id}) }}">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <form class="d-inline" method="post" action="{{ path('app_infos_delete', {moutonId:mouton.id,id:i.id}) }}" id="form-delete-infos-{{ i.id }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_infos_'~i.id) }}">
+                                        <button type="button" class="action-btn action-delete" title="Supprimer" onclick="confirmDelete('form-delete-infos-{{ i.id }}', 'cette note')">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted" style="font-size: 13px;">Aucune information enregistrée pour le moment.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 </div>
 {% endblock %}

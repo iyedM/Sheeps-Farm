@@ -1835,3 +1835,71 @@ a {
 @keyframes shimmer {
   to { background-position: -200% 0; }
 }
+
+/* ── Premium Pagination (KnpPaginator) ── */
+.table-pagination-wrapper {
+    padding: 16px 24px;
+    border-top: 1px solid var(--card-border);
+    background: var(--card-bg);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-bottom-left-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+}
+
+.table-pagination-wrapper .pagination {
+    margin-bottom: 0;
+    gap: 6px;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding-left: 0;
+}
+
+.table-pagination-wrapper .pagination > li,
+.table-pagination-wrapper .pagination > span {
+    display: inline-flex;
+}
+
+.table-pagination-wrapper .pagination .page-link,
+.table-pagination-wrapper .pagination span,
+.table-pagination-wrapper .pagination a {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    padding: 0 10px;
+    text-decoration: none;
+    transition: all var(--spring);
+}
+
+.table-pagination-wrapper .pagination li:not(.active):not(.disabled) .page-link:hover,
+.table-pagination-wrapper .pagination a:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.table-pagination-wrapper .pagination li.active .page-link,
+.table-pagination-wrapper .pagination span.current {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(0, 214, 143, 0.25);
+    z-index: 1;
+}
+
+.table-pagination-wrapper .pagination li.disabled .page-link,
+.table-pagination-wrapper .pagination span.disabled {
+    color: var(--text-muted);
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: transparent;
+}

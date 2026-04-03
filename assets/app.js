@@ -206,25 +206,33 @@ function initFlatpickr() {
 /* ── DataTables Premium Style ── */
 function initDataTables() {
     if (typeof jQuery !== 'undefined' && typeof jQuery.fn.DataTable !== 'undefined') {
-        jQuery('table.dt-table').DataTable({
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json'
-            },
-            pageLength: 10,
-            responsive: true,
-            autoWidth: false,
-            dom: 'rt<"dt-footer"ip>',
-            columnDefs: [{ orderable: false, targets: [-1] }], // disable sorting on last column (actions)
-            initComplete: function () {
-                const api = this.api();
-                // Connect external search input if it exists
-                const searchInput = document.getElementById('tableSearch');
-                if (searchInput) {
-                    searchInput.addEventListener('input', function () {
-                        api.search(this.value).draw();
-                    });
+        jQuery('table.dt-table').each(function () {
+            const table = jQuery(this);
+            const isServer = table.hasClass('dt-server');
+
+            table.DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json'
+                },
+                pageLength: 10,
+                responsive: true,
+                autoWidth: false,
+                dom: isServer ? 'rt' : 'rt<"dt-footer"ip>',
+                paging: !isServer,
+                info: !isServer,
+                ordering: !isServer,
+                columnDefs: [{ orderable: false, targets: [-1] }],
+                initComplete: function () {
+                    const api = this.api();
+                    // Connect external search input if it exists
+                    const searchInput = document.getElementById('tableSearch');
+                    if (searchInput) {
+                        searchInput.addEventListener('input', function () {
+                            api.search(this.value).draw();
+                        });
+                    }
                 }
-            }
+            });
         });
     }
 }

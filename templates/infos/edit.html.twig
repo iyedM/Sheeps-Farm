@@ -1,3 +1,67 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Modifier Info{% endblock %}
-{% block body %}<div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-success">Mettre à jour</button>{{ form_end(form) }}</div></div>{% endblock %}
+
+{% block title %}Modifier Info - FermeApp{% endblock %}
+{% block breadcrumb_current %}Moutons > Détails > Modifier Info{% endblock %}
+
+{% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Modifier une Info</h1>
+        <p class="page-subtitle">Mise à jour d'une observation pour le mouton #{{ moutonId }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_mouton_show', {id: moutonId}) }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-6">
+        <div class="form-card">
+            <div class="form-card-header d-flex align-items-center gap-3">
+                <div class="stat-icon" style="--icon-bg: rgba(255, 140, 0, 0.1); --icon-color: #ff8c00; width: 48px; height: 48px;">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 16px;">Correction de Note</h3>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Mettez à jour le détail de l'information</p>
+                </div>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row gx-3">
+                    <div class="col-12 mb-3">
+                        <label class="form-label text-muted small mb-1">Description / Observation</label>
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Maladie détectée, traitement, pesée...', 'rows': 4}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.description) }}</div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label text-muted small mb-1">Date de la note</label>
+                        {{ form_widget(form.dateAjout, {'attr': {'class': 'form-control datepicker', 'placeholder': 'Sélectionner une date'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.dateAjout) }}</div>
+                    </div>
+                </div>
+
+                <div style="display:none">{{ form_rest(form) }}</div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn-primary btn-submit" type="submit">
+                        <i class="bi bi-save"></i> Mettre à jour
+                    </button>
+                    <a href="{{ path('app_mouton_show', {id: moutonId}) }}" class="btn-secondary">Annuler</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

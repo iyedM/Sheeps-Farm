@@ -1,31 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier Vaccin - FermeApp{% endblock %}
-{% block breadcrumb_current %}Moutons > Détails > Modifier Vaccin{% endblock %}
+{% block title %}Vaccin pour groupe - FermeApp{% endblock %}
+{% block breadcrumb_current %}Moutons > Vaccin Groupé{% endblock %}
 
 {% block body %}
 <div class="page-header" data-aos="fade-down">
     <div>
-        <h1 class="page-title">Modifier un Vaccin</h1>
-        <p class="page-subtitle">Mise à jour du dossier médical pour le mouton #{{ moutonId }}</p>
+        <h1 class="page-title">Vaccin Groupé</h1>
+        <p class="page-subtitle">Appliquez un même vaccin à plusieurs moutons simultanément</p>
     </div>
     <div class="page-actions">
-        <a href="{{ path('app_mouton_show', {id: moutonId}) }}" class="btn-secondary">
+        <a href="{{ path('app_mouton_index') }}" class="btn-secondary">
             <i class="bi bi-arrow-left"></i> Retour
         </a>
     </div>
 </div>
 
 <div class="row" data-aos="fade-up" data-aos-delay="100">
-    <div class="col-lg-6">
+    <div class="col-lg-8">
         <div class="form-card">
             <div class="form-card-header d-flex align-items-center gap-3">
                 <div class="stat-icon" style="--icon-bg: rgba(0, 153, 255, 0.1); --icon-color: #0099ff; width: 48px; height: 48px;">
-                    <i class="bi bi-shield-check"></i>
+                    <i class="bi bi-shield-plus"></i>
                 </div>
                 <div>
-                    <h3 style="margin: 0; font-size: 16px;">Correction de Fiche</h3>
-                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Mettez à jour les informations du vaccin</p>
+                    <h3 style="margin: 0; font-size: 16px;">Création de Vaccin en Lot</h3>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Sélectionnez les moutons et le vaccin administré</p>
                 </div>
             </div>
             <div class="form-card-body">
@@ -38,15 +38,25 @@
                 {% endif %}
 
                 <div class="row gx-3">
-                    <div class="col-12 mb-3">
+                    <div class="col-md-7 mb-3">
                         <label class="form-label text-muted small mb-1">Nom du vaccin</label>
                         {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Vaccin Anti-clostridien'}}) }}
                         <div class="invalid-feedback d-block">{{ form_errors(form.nom) }}</div>
                     </div>
-                    <div class="col-12 mb-3">
+                    <div class="col-md-5 mb-3">
                         <label class="form-label text-muted small mb-1">Date d'administration</label>
                         {{ form_widget(form.dateVaccination, {'attr': {'class': 'form-control datepicker', 'placeholder': 'Sélectionner une date'}}) }}
                         <div class="invalid-feedback d-block">{{ form_errors(form.dateVaccination) }}</div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12 mb-3">
+                        <label class="form-label text-primary fw-bold mb-2"><i class="bi bi-list-check me-2"></i>Moutons traités</label>
+                        <p class="text-muted small mb-3">Recherchez et sélectionnez tous les moutons qui ont reçu ce vaccin.</p>
+                        
+                        {{ form_widget(form.moutons, {'attr': {'class': 'form-select select2-enabled'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.moutons) }}</div>
                     </div>
                 </div>
 
@@ -54,9 +64,10 @@
 
                 <div class="mt-4 d-flex gap-2">
                     <button class="btn-primary btn-submit" type="submit">
-                        <i class="bi bi-save"></i> Mettre à jour
+                        <i class="bi bi-check2-all"></i> Appliquer le vaccin
+                        <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
                     </button>
-                    <a href="{{ path('app_mouton_show', {id: moutonId}) }}" class="btn-secondary">Annuler</a>
+                    <a href="{{ path('app_mouton_index') }}" class="btn-secondary">Annuler</a>
                 </div>
                 
                 {{ form_end(form) }}

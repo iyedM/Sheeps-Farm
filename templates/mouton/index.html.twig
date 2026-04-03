@@ -1,32 +1,134 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Moutons{% endblock %}
+
+{% block title %}Moutons - FermeApp{% endblock %}
+
+{% block breadcrumb_current %}Moutons{% endblock %}
+
 {% block body %}
-<div class="card mb-3"><div class="card-body">
-<form method="get" class="row g-2">
-    <div class="col"><input name="race" value="{{ filters.race }}" placeholder="Race" class="form-control"></div>
-    <div class="col"><input name="genre" value="{{ filters.genre }}" placeholder="Genre" class="form-control"></div>
-    <div class="col"><input name="origine" value="{{ filters.origine }}" placeholder="Origine" class="form-control"></div>
-    <div class="col"><button class="btn btn-primary">Filtrer</button></div>
-    <div class="col text-end"><a class="btn btn-success" href="{{ path('app_mouton_new') }}">Nouveau</a></div>
-</form>
-</div></div>
-<div class="card"><div class="card-body">
-<table class="table datatable" data-server-pagination="1">
-<thead><tr><th>ID</th><th>Race</th><th>Genre</th><th>Age</th><th>Grange</th><th>Actions</th></tr></thead>
-<tbody>
-{% for mouton in pagination %}
-<tr>
-<td>{{ mouton.id }}</td><td>{{ mouton.race }}</td><td>{{ mouton.genre }}</td><td>{{ mouton.currentAge }}</td><td>{{ mouton.grange.nom }}</td>
-<td>
-<a href="{{ path('app_mouton_show', {id:mouton.id}) }}" class="btn btn-sm btn-secondary">Voir</a>
-<a href="{{ path('app_mouton_edit', {id:mouton.id}) }}" class="btn btn-sm btn-primary">Edit</a>
-<form method="post" action="{{ path('app_mouton_delete', {id:mouton.id}) }}" class="d-inline delete-form">
-<input type="hidden" name="_token" value="{{ csrf_token('delete_mouton_' ~ mouton.id) }}"><button class="btn btn-sm btn-danger">Del</button>
-</form>
-</td>
-</tr>
-{% endfor %}
-</tbody></table>
-{{ knp_pagination_render(pagination) }}
-</div></div>
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Moutons</h1>
+        <p class="page-subtitle">Gestion de votre cheptel</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn-secondary">
+            <i class="bi bi-download"></i> Exporter
+        </button>
+        <a href="{{ path('app_mouton_group_new') }}" class="btn-secondary">
+            <i class="bi bi-collection"></i> Groupe
+        </a>
+        <a href="{{ path('app_mouton_vaccin_bulk') }}" class="btn-secondary">
+            <i class="bi bi-shield-plus"></i> Vaccin groupe
+        </a>
+        <a href="{{ path('app_mouton_new') }}" class="btn-primary">
+            <i class="bi bi-plus-lg"></i> Nouveau
+        </a>
+    </div>
+</div>
+
+<div class="filter-bar" data-aos="fade-down" data-aos-delay="100">
+    <button class="filter-toggle" data-bs-toggle="collapse" data-bs-target="#filterPanel">
+        <i class="bi bi-sliders"></i> Filtres
+        {% if filters.race or filters.genre or filters.origine %}
+            <span class="filter-count-badge">!</span>
+        {% endif %}
+        <i class="bi bi-chevron-down filter-arrow"></i>
+    </button>
+    <div class="collapse {% if filters.race or filters.genre or filters.origine %}show{% endif %}" id="filterPanel">
+        <div class="filter-panel">
+            <form method="get">
+                <div class="filter-grid">
+                    <input name="race" value="{{ filters.race }}" placeholder="Race" class="form-control">
+                    
+                    <select name="genre" class="form-select">
+                        <option value="">-- Tous les genres --</option>
+                        <option value="Mâle" {% if filters.genre == 'Mâle' %}selected{% endif %}>Mâle</option>
+                        <option value="Femelle" {% if filters.genre == 'Femelle' %}selected{% endif %}>Femelle</option>
+                    </select>
+
+                    <select name="origine" class="form-select">
+                        <option value="">-- Toutes les origines --</option>
+                        <option value="Interne" {% if filters.origine == 'Interne' %}selected{% endif %}>Interne</option>
+                        <option value="Externe" {% if filters.origine == 'Externe' %}selected{% endif %}>Externe</option>
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <a href="{{ path('app_mouton_index') }}" class="btn-secondary btn-sm" id="resetFilters">
+                        <i class="bi bi-x-lg"></i> Réinitialiser
+                    </a>
+                    <button class="btn-primary btn-sm" type="submit">
+                        <i class="bi bi-search"></i> Appliquer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="table-card" data-aos="fade-up" data-aos-delay="200">
+    <div class="table-card-header">
+        <div>
+            <h3>Liste des Moutons</h3>
+            <span class="record-count">{{ pagination.getTotalItemCount() }} résultats</span>
+        </div>
+        <div class="table-actions">
+            <!-- DataTables search integration or manual search input -->
+            <div class="search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Rechercher (page)..." class="table-search" id="tableSearch"/>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTables will handle the presentation gracefully without rendering double paginators -->
+    <table class="table dt-table dt-server" width="100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Race</th>
+                <th>Genre</th>
+                <th>Age</th>
+                <th>Grange</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mouton in pagination %}
+            <tr>
+                <td><strong>#{{ mouton.id }}</strong></td>
+                <td>{{ mouton.race }}</td>
+                <td>
+                    {% if mouton.genre|lower == 'mâle' or mouton.genre|lower == 'male' %}
+                        <span class="badge-status badge-male">Mâle</span>
+                    {% else %}
+                        <span class="badge-status badge-femelle">Femelle</span>
+                    {% endif %}
+                </td>
+                <td>{{ mouton.currentAge }} mois</td>
+                <td>{{ mouton.grange ? mouton.grange.nom : '-' }}</td>
+                <td class="text-end">
+                    <div class="row-actions justify-content-end">
+                        <a href="{{ path('app_mouton_show', {id:mouton.id}) }}" class="action-btn action-view" title="Voir">
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+                        <a href="{{ path('app_mouton_edit', {id:mouton.id}) }}" class="action-btn action-edit" title="Modifier">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <form method="post" action="{{ path('app_mouton_delete', {id:mouton.id}) }}" class="d-inline" id="form-delete-{{ mouton.id }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_mouton_' ~ mouton.id) }}">
+                            <button type="button" class="action-btn action-delete" title="Supprimer" onclick="confirmDelete('form-delete-{{ mouton.id }}', 'le mouton #{{ mouton.id }}')">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="table-pagination-wrapper">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+</div>
 {% endblock %}

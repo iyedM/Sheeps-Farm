@@ -1,3 +1,97 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Modifier Mouton{% endblock %}
-{% block body %}<div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-success">Mettre à jour</button>{{ form_end(form) }}</div></div>{% endblock %}
+
+{% block title %}Modifier le Mouton #{{ mouton.id }} - FermeApp{% endblock %}
+{% block breadcrumb_current %}Moutons > Édition{% endblock %}
+
+{% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Modifier le Mouton #{{ mouton.id }}</h1>
+        <p class="page-subtitle">Mettez à jour les informations du cheptel</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_mouton_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3>Informations Principales</h3>
+                <p>Correction des attributs du mouton.</p>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Race</label>
+                        {{ form_widget(form.race, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Barbarine'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.race) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Genre</label>
+                        {{ form_widget(form.genre, {'attr': {'class': 'form-select'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.genre) }}</div>
+                    </div>
+                </div>
+
+                <div class="row gx-3">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted small mb-1">Âge Initial (mois)</label>
+                        {{ form_widget(form.ageInitialMois, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.ageInitialMois) }}</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted small mb-1">Date d'Ajout</label>
+                        {{ form_widget(form.dateAjout, {'attr': {'class': 'form-control datepicker', 'placeholder': 'Sélectionner une date'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.dateAjout) }}</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted small mb-1">Origine</label>
+                        {{ form_widget(form.origine, {'attr': {'class': 'form-select'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.origine) }}</div>
+                    </div>
+                </div>
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Grange d'affectation</label>
+                        {{ form_widget(form.grange, {'attr': {'class': 'form-select select2-enabled'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.grange) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Prix Estimé (TND)</label>
+                        <div class="input-group">
+                            {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                            <span class="input-group-text border-0" style="background:var(--bg-hover);">TND</span>
+                        </div>
+                        <div class="invalid-feedback d-block">{{ form_errors(form.prix) }}</div>
+                    </div>
+                </div>
+                
+                <div style="display:none">{{ form_rest(form) }}</div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn-primary btn-submit" type="submit">
+                        <i class="bi bi-save"></i> Mettre à jour
+                        <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
+                    </button>
+                    <a href="{{ path('app_mouton_index') }}" class="btn-secondary">Annuler</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

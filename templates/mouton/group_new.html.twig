@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouveau Mouton - FermeApp{% endblock %}
-{% block breadcrumb_current %}Moutons > Nouveau{% endblock %}
+{% block title %}Création Groupée - FermeApp{% endblock %}
+{% block breadcrumb_current %}Moutons > Création en lot{% endblock %}
 
 {% block body %}
 <div class="page-header" data-aos="fade-down">
     <div>
-        <h1 class="page-title">Ajouter un Mouton</h1>
-        <p class="page-subtitle">Enregistrez un nouveau mouton dans votre base</p>
+        <h1 class="page-title">Créer un Groupe de Moutons</h1>
+        <p class="page-subtitle">Renseignez les détails communs et générez rapidement plusieurs moutons</p>
     </div>
     <div class="page-actions">
         <a href="{{ path('app_mouton_index') }}" class="btn-secondary">
-            <i class="bi bi-arrow-left"></i> Retour à la liste
+            <i class="bi bi-arrow-left"></i> Retour
         </a>
     </div>
 </div>
@@ -19,9 +19,14 @@
 <div class="row" data-aos="fade-up" data-aos-delay="100">
     <div class="col-lg-8">
         <div class="form-card">
-            <div class="form-card-header">
-                <h3>Informations Principales</h3>
-                <p>Veuillez remplir les détails du cheptel.</p>
+            <div class="form-card-header d-flex align-items-center gap-3">
+                <div class="stat-icon" style="--icon-bg: rgba(0, 214, 143, 0.1); --icon-color: var(--accent); width: 48px; height: 48px;">
+                    <i class="bi bi-collection-fill"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 16px;">Paramètres du lot</h3>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Informations répliquées sur chaque nouvel animal</p>
+                </div>
             </div>
             <div class="form-card-body">
                 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
@@ -32,10 +37,21 @@
                     </div>
                 {% endif %}
 
+                <!-- Quantité Highlighted -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div style="background: var(--bg-hover); padding: 20px; border-radius: var(--radius-md); border: 1px dashed var(--accent);">
+                            <label class="form-label text-primary fw-bold mb-2"><i class="bi bi-123 me-2"></i>Combien de moutons souhaitez-vous créer ?</label>
+                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Ex: 50', 'style': 'max-width: 200px; font-weight: bold; font-size: 20px; color: var(--accent);'}}) }}
+                            <div class="invalid-feedback d-block">{{ form_errors(form.quantite) }}</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row gx-3">
                     <div class="col-md-6 mb-3">
                         <label class="form-label text-muted small mb-1">Race</label>
-                        {{ form_widget(form.race, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Barbarine'}}) }}
+                        {{ form_widget(form.race, {'attr': {'class': 'form-control', 'placeholder': 'Ex: D\'man'}}) }}
                         <div class="invalid-feedback d-block">{{ form_errors(form.race) }}</div>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -46,31 +62,31 @@
                 </div>
 
                 <div class="row gx-3">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label text-muted small mb-1">Âge Initial (mois)</label>
                         {{ form_widget(form.ageInitialMois, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
                         <div class="invalid-feedback d-block">{{ form_errors(form.ageInitialMois) }}</div>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label text-muted small mb-1">Date d'Ajout</label>
                         {{ form_widget(form.dateAjout, {'attr': {'class': 'form-control datepicker', 'placeholder': 'Sélectionner une date'}}) }}
                         <div class="invalid-feedback d-block">{{ form_errors(form.dateAjout) }}</div>
                     </div>
+                </div>
+
+                <div class="row gx-3">
                     <div class="col-md-4 mb-3">
                         <label class="form-label text-muted small mb-1">Origine</label>
                         {{ form_widget(form.origine, {'attr': {'class': 'form-select'}}) }}
                         <div class="invalid-feedback d-block">{{ form_errors(form.origine) }}</div>
                     </div>
-                </div>
-
-                <div class="row gx-3">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-muted small mb-1">Grange d'affectation</label>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted small mb-1">Grange</label>
                         {{ form_widget(form.grange, {'attr': {'class': 'form-select select2-enabled'}}) }}
                         <div class="invalid-feedback d-block">{{ form_errors(form.grange) }}</div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-muted small mb-1">Prix Estimé (TND)</label>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-muted small mb-1">Prix unitaire (TND)</label>
                         <div class="input-group">
                             {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
                             <span class="input-group-text border-0" style="background:var(--bg-hover);">TND</span>
@@ -83,7 +99,7 @@
 
                 <div class="mt-4 d-flex gap-2">
                     <button class="btn-primary btn-submit" type="submit">
-                        <i class="bi bi-save"></i> Enregistrer
+                        <i class="bi bi-stack"></i> Générer le lot
                         <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
                     </button>
                     <a href="{{ path('app_mouton_index') }}" class="btn-secondary">Annuler</a>

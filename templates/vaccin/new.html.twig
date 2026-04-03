@@ -1,3 +1,67 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Ajouter Vaccin{% endblock %}
-{% block body %}<div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-success">Enregistrer</button>{{ form_end(form) }}</div></div>{% endblock %}
+
+{% block title %}Nouveau Vaccin - FermeApp{% endblock %}
+{% block breadcrumb_current %}Moutons > Détails > Nouveau Vaccin{% endblock %}
+
+{% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Ajouter un Vaccin</h1>
+        <p class="page-subtitle">Administration de vaccin pour le mouton #{{ mouton.id }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_mouton_show', {id: mouton.id}) }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-6">
+        <div class="form-card">
+            <div class="form-card-header d-flex align-items-center gap-3">
+                <div class="stat-icon" style="--icon-bg: rgba(0, 153, 255, 0.1); --icon-color: #0099ff; width: 48px; height: 48px;">
+                    <i class="bi bi-shield-plus"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 16px;">Création Avancée</h3>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Enregistrement médical</p>
+                </div>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row gx-3">
+                    <div class="col-12 mb-3">
+                        <label class="form-label text-muted small mb-1">Nom du vaccin</label>
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Vaccin Anti-clostridien'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.nom) }}</div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label text-muted small mb-1">Date d'administration</label>
+                        {{ form_widget(form.dateVaccination, {'attr': {'class': 'form-control datepicker', 'placeholder': 'Sélectionner une date'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.dateVaccination) }}</div>
+                    </div>
+                </div>
+
+                <div style="display:none">{{ form_rest(form) }}</div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn-primary btn-submit" type="submit">
+                        <i class="bi bi-save"></i> Enregistrer
+                    </button>
+                    <a href="{{ path('app_mouton_show', {id: mouton.id}) }}" class="btn-secondary">Annuler</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
