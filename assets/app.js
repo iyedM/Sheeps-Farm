@@ -1,332 +1,446 @@
+/*
+ * Welcome to your app's main JavaScript file!
+ *
+ * This file will be included onto the page via the importmap() Twig function,
+ * or Webpack Encore if you're using it (which we are).
+ */
+
 import './styles/app.css';
+import './styles/custom.css';
 
-const CHART_COLORS = ['#2ECC71', '#3498DB', '#F39C12', '#E74C3C', '#9B59B6', '#1ABC9C'];
-
-window.confirmDelete = function confirmDelete(formId) {
-	Swal.fire({
-		title: 'Confirmer la suppression',
-		text: 'Cette action est irréversible.',
-		icon: 'warning',
-		iconColor: '#E74C3C',
-		showCancelButton: true,
-		confirmButtonColor: '#E74C3C',
-		cancelButtonColor: '#6B7A8E',
-		confirmButtonText: '<i class="bi bi-trash"></i> Supprimer',
-		cancelButtonText: 'Annuler',
-		borderRadius: '16px',
-		customClass: {
-			popup: 'swal-farm-popup',
-			title: 'swal-farm-title'
-		}
-	}).then((result) => {
-		if (result.isConfirmed) {
-			const form = document.getElementById(formId);
-			if (form) form.submit();
-		}
-	});
-};
-
-const applyChartDefaults = () => {
-	if (!window.Chart) return;
-	Chart.defaults.font.family = 'Inter, sans-serif';
-	Chart.defaults.font.size = 12;
-	Chart.defaults.color = '#6B7A8E';
-	Chart.defaults.plugins.legend.labels.boxWidth = 10;
-	Chart.defaults.responsive = true;
-	Chart.defaults.maintainAspectRatio = false;
-};
-
-const initSidebar = () => {
-	const sidebar = document.getElementById('appSidebar');
-	const backdrop = document.getElementById('sidebarBackdrop');
-	const toggle = document.getElementById('sidebarToggle');
-	if (!sidebar || !backdrop || !toggle) return;
-
-	const close = () => {
-		sidebar.classList.remove('show');
-		backdrop.classList.remove('show');
-		document.body.classList.remove('overflow-hidden');
-	};
-
-	toggle.addEventListener('click', () => {
-		sidebar.classList.toggle('show');
-		backdrop.classList.toggle('show');
-		document.body.classList.toggle('overflow-hidden');
-	});
-	backdrop.addEventListener('click', close);
-};
-
-const initSelect2 = () => {
-	if (window.$ && $.fn.select2) {
-		$('select').select2({ width: '100%' });
-	}
-};
-
-const initFlatpickr = () => {
-	if (!window.flatpickr) return;
-	flatpickr('input[type="date"]', {
-		dateFormat: 'Y-m-d',
-		disableMobile: true
-	});
-};
-
-const initToasts = () => {
-	document.querySelectorAll('.app-toast').forEach((toast) => {
-		setTimeout(() => {
-			toast.classList.add('dismiss');
-			setTimeout(() => toast.remove(), 250);
-		}, 4000);
-	});
-};
-
-const initSubmitLoading = () => {
-	document.querySelectorAll('form').forEach((form) => {
-		form.addEventListener('submit', () => {
-			const btn = form.querySelector('button[type="submit"]');
-			if (!btn || btn.dataset.noLoading === '1') return;
-			if (btn.dataset.loadingApplied === '1') return;
-			btn.dataset.loadingApplied = '1';
-			const initial = btn.innerHTML;
-			btn.dataset.initialHtml = initial;
-			btn.disabled = true;
-			btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Chargement...';
-		});
-	});
-};
-
-const initDeleteForms = () => {
-	document.querySelectorAll('form.delete-form').forEach((form) => {
-		if (!form.id) {
-			form.id = `delete-form-${Math.random().toString(36).slice(2)}`;
-		}
-		form.addEventListener('submit', (event) => {
-			event.preventDefault();
-			window.confirmDelete(form.id);
-		});
-	});
-};
-
-const initActionButtons = () => {
-	document.querySelectorAll('.btn-action').forEach((btn) => {
-		const label = btn.dataset.label;
-		const icon = btn.dataset.icon;
-		if (!label || !icon) return;
-		const mobile = window.matchMedia('(max-width: 767.98px)').matches;
-		btn.innerHTML = mobile ? `<i class="bi ${icon}"></i>` : `<i class="bi ${icon} me-1"></i>${label}`;
-	});
-};
-
-const initDataTables = () => {
-	if (!(window.$ && $.fn.DataTable)) return;
-	$('table.datatable').each(function init() {
-		const $table = $(this);
-		const serverPagination = $table.data('serverPagination') === 1 || $table.data('serverPagination') === true || $table.data('serverPagination') === '1';
-		const wrapper = $table.closest('.table-wrap');
-		if (wrapper.length) wrapper.addClass('skeleton');
-
-		$table.DataTable({
-			language: { url: '/js/dataTables.french.json' },
-			pageLength: 10,
-			responsive: true,
-			paging: !serverPagination,
-			searching: !serverPagination,
-			info: !serverPagination,
-			lengthChange: !serverPagination,
-			dom: serverPagination
-				? 't'
-				: '<"row"<"col-md-6"l><"col-md-6"f>>t<"row"<"col-md-6"i><"col-md-6"p>>',
-			drawCallback: initActionButtons,
-			initComplete: function onInit() {
-				if (wrapper.length) wrapper.removeClass('skeleton');
-				initActionButtons();
-			}
-		});
-	});
-};
-
-const animateCounters = () => {
-	document.querySelectorAll('[data-countup]').forEach((el) => {
-		const target = Number(el.dataset.countup || 0);
-		const duration = 900;
-		const start = performance.now();
-		const initial = 0;
-
-		const tick = (now) => {
-			const p = Math.min((now - start) / duration, 1);
-			const value = Math.floor(initial + (target - initial) * p);
-			el.textContent = value.toLocaleString('fr-FR');
-			if (p < 1) requestAnimationFrame(tick);
-		};
-		requestAnimationFrame(tick);
-	});
-};
-
-const chartData = (id) => {
-	const el = document.getElementById(id);
-	if (!el) return null;
-	return {
-		el,
-		items: JSON.parse(el.dataset.chart || '[]')
-	};
-};
-
-const initCharts = () => {
-	if (!window.Chart) return;
-
-	const renderDonut = (id, label) => {
-		const data = chartData(id);
-		if (!data) return;
-		new Chart(data.el, {
-			type: 'doughnut',
-			data: {
-				labels: data.items.map((x) => x.label ?? x.mois),
-				datasets: [{
-					label,
-					data: data.items.map((x) => x.total),
-					backgroundColor: CHART_COLORS,
-					borderWidth: 0,
-					cutout: '60%'
-				}]
-			},
-			options: {
-				plugins: {
-					legend: {
-						position: 'bottom',
-						labels: { usePointStyle: true }
-					}
-				}
-			}
-		});
-	};
-
-	const renderBar = (id) => {
-		const data = chartData(id);
-		if (!data) return;
-		new Chart(data.el, {
-			type: 'bar',
-			data: {
-				labels: data.items.map((x) => x.label),
-				datasets: [{
-					data: data.items.map((x) => x.total),
-					backgroundColor: CHART_COLORS[0],
-					borderRadius: 6,
-					borderSkipped: false
-				}]
-			},
-			options: {
-				plugins: { legend: { display: false } }
-			}
-		});
-	};
-
-	const renderLine = (id) => {
-		const data = chartData(id);
-		if (!data) return;
-		const ctx = data.el.getContext('2d');
-		const gradient = ctx.createLinearGradient(0, 0, 0, 220);
-		gradient.addColorStop(0, 'rgba(46, 204, 113, 0.18)');
-		gradient.addColorStop(1, 'rgba(46, 204, 113, 0)');
-
-		new Chart(data.el, {
-			type: 'line',
-			data: {
-				labels: data.items.map((x) => x.mois),
-				datasets: [{
-					data: data.items.map((x) => x.total),
-					borderColor: CHART_COLORS[0],
-					backgroundColor: gradient,
-					fill: true,
-					tension: 0.4,
-					pointRadius: 4,
-					pointHoverRadius: 6
-				}]
-			},
-			options: {
-				plugins: { legend: { display: false } }
-			}
-		});
-	};
-
-	renderDonut('chartGenre', 'Genre');
-	renderDonut('chartRace', 'Race');
-	renderDonut('chartOrigine', 'Origine');
-	renderBar('chartGrange');
-	renderLine('chartEvolution');
-};
-
-const updateFactureAchatTotal = () => {
-	const holder = document.querySelector('[data-collection-holder]');
-	const totalEl = document.getElementById('facture-total-live');
-	if (!holder || !totalEl) return;
-
-	let total = 0;
-	holder.querySelectorAll('[name*="[prix]"], [name*="[quantite]"]').forEach(() => {
-		// noop, trigger iteration through rows below
-	});
-
-	holder.querySelectorAll('.sous-lot-row').forEach((row) => {
-		const prix = Number((row.querySelector('[name*="[prix]"]')?.value || '0').replace(',', '.'));
-		const qte = Number((row.querySelector('[name*="[quantite]"]')?.value || '0').replace(',', '.'));
-		total += prix * qte;
-	});
-
-	totalEl.textContent = `${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TND`;
-};
-
-const initFactureLots = () => {
-	const addRowBtn = document.getElementById('add-row');
-	const holder = document.querySelector('[data-collection-holder]');
-	if (!addRowBtn || !holder) return;
-
-	let index = Number(holder.dataset.index || holder.querySelectorAll('.sous-lot-row').length);
-	const prototype = holder.dataset.prototype || '';
-
-	const bindRow = (row) => {
-		row.classList.add('sous-lot-row');
-		row.querySelectorAll('input, select').forEach((input) => {
-			input.addEventListener('input', updateFactureAchatTotal);
-			input.addEventListener('change', updateFactureAchatTotal);
-		});
-
-		const remove = row.querySelector('.btn-remove-lot');
-		if (remove) {
-			remove.addEventListener('click', () => {
-				row.remove();
-				updateFactureAchatTotal();
-			});
-		}
-	};
-
-	holder.querySelectorAll('.sous-lot-row').forEach(bindRow);
-
-	addRowBtn.addEventListener('click', () => {
-		if (!prototype) return;
-		const html = prototype.replace(/__name__/g, String(index));
-		index += 1;
-		holder.dataset.index = String(index);
-
-		const row = document.createElement('div');
-		row.className = 'sous-lot-row panel p-3 mb-2 position-relative';
-		row.innerHTML = `${html}<button type="button" class="btn btn-sm btn-danger btn-remove-lot position-absolute top-0 end-0 m-2"><i class="bi bi-x"></i></button>`;
-		holder.appendChild(row);
-		bindRow(row);
-		initSelect2();
-		updateFactureAchatTotal();
-	});
-
-	updateFactureAchatTotal();
-};
-
+// Global Initialization
 document.addEventListener('DOMContentLoaded', () => {
-	applyChartDefaults();
-	initSidebar();
-	initSelect2();
-	initFlatpickr();
-	initDeleteForms();
-	initSubmitLoading();
-	initToasts();
-	initDataTables();
-	initCharts();
-	animateCounters();
-	initFactureLots();
+    initSidebar();
+    initThemeToggle();
+    initToasts();
+    initAOS();
+    initCountUp();
+    initSelect2();
+    initFlatpickr();
+    initDataTables();
+    initFormLoading();
+    initChartJsConfig();
+    initCollectionForms();
 });
+
+/* ── Sidebar Toggle & Collapse ── */
+function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const collapseBtn = document.querySelector('.sidebar-collapse-btn');
+    const mobileToggle = document.querySelector('.topbar-mobile-toggle');
+    const backdrop = document.createElement('div');
+
+    backdrop.className = 'sidebar-backdrop';
+    document.body.appendChild(backdrop);
+
+    // Desktop Collapse
+    if (collapseBtn) {
+        collapseBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            const icon = collapseBtn.querySelector('i');
+            if (icon) {
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.replace('bi-layout-sidebar', 'bi-layout-sidebar-inset');
+                } else {
+                    icon.classList.replace('bi-layout-sidebar-inset', 'bi-layout-sidebar');
+                }
+            }
+        });
+    }
+
+    // Mobile Toggle
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            backdrop.classList.toggle('show');
+        });
+    }
+
+    // Close mobile sidebar when clicking backdrop
+    backdrop.addEventListener('click', () => {
+        sidebar.classList.remove('show');
+        backdrop.classList.remove('show');
+    });
+
+    // Active link highlighting based on current URL path
+    const currentPath = window.location.pathname;
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        if (item.getAttribute('href') === currentPath) {
+            item.classList.add('active');
+        } else {
+            // Check if it's a parent path (basic heuristic)
+            const href = item.getAttribute('href');
+            if (href !== '/' && href !== '#' && currentPath.startsWith(href)) {
+                item.classList.add('active');
+            }
+        }
+    });
+}
+
+/* ── Theme Toggle ── */
+function initThemeToggle() {
+    const themeBtn = document.querySelector('.theme-toggle');
+    if (!themeBtn) return;
+
+    // Load saved theme or system preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+    }
+
+    themeBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            themeBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            themeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+        }
+    });
+}
+
+/* ── Flash Toasts ── */
+function initToasts() {
+    const toasts = document.querySelectorAll('.app-toast');
+    toasts.forEach(toast => {
+        const autoDismissTime = parseInt(toast.getAttribute('data-auto-dismiss') || '4000', 10);
+        const progressBar = toast.querySelector('.toast-progress');
+        const closeBtn = toast.querySelector('.toast-close');
+
+        if (progressBar && autoDismissTime > 0) {
+            progressBar.style.animationDuration = `${autoDismissTime}ms`;
+        }
+
+        let dismissTimeout;
+        if (autoDismissTime > 0) {
+            dismissTimeout = setTimeout(() => {
+                dismissToast(toast);
+            }, autoDismissTime);
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                if (dismissTimeout) clearTimeout(dismissTimeout);
+                dismissToast(toast);
+            });
+        }
+    });
+}
+
+function dismissToast(toast) {
+    toast.style.animation = 'fadeOut 300ms var(--spring) forwards';
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.remove();
+        }
+    }, 300);
+}
+
+/* ── AOS (Animate On Scroll) ── */
+function initAOS() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 400,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 40
+        });
+    }
+}
+
+/* ── CountUp.js ── */
+function initCountUp() {
+    if (typeof CountUp !== 'undefined') {
+        document.querySelectorAll('[data-countup]').forEach(el => {
+            const target = el.dataset.target || el.innerText.replace(/[^0-9.-]+/g, '');
+            const countUp = new CountUp(el, parseFloat(target), {
+                duration: 1.8,
+                separator: ' ',
+                decimal: ',',
+                useEasing: true,
+                easingFn: (t, b, c, d) => c * (1 - Math.pow(1 - t / d, 3)) + b
+            });
+            if (!countUp.error) {
+                countUp.start();
+            } else {
+                console.error(countUp.error);
+            }
+        });
+    }
+}
+
+/* ── Select2 ── */
+function initSelect2() {
+    if (typeof jQuery !== 'undefined' && typeof jQuery.fn.select2 !== 'undefined') {
+        jQuery('.select2-enabled').select2({
+            width: '100%',
+            minimumResultsForSearch: 5
+        });
+    }
+}
+
+/* ── Flatpickr ── */
+function initFlatpickr() {
+    if (typeof flatpickr !== 'undefined') {
+        flatpickr('.datepicker', {
+            dateFormat: "Y-m-d",
+            allowInput: true
+        });
+
+        flatpickr('.datetimepicker', {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            allowInput: true
+        });
+    }
+}
+
+/* ── DataTables Premium Style ── */
+function initDataTables() {
+    if (typeof jQuery !== 'undefined' && typeof jQuery.fn.DataTable !== 'undefined') {
+        jQuery('table.dt-table').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json'
+            },
+            pageLength: 10,
+            responsive: true,
+            autoWidth: false,
+            dom: 'rt<"dt-footer"ip>',
+            columnDefs: [{ orderable: false, targets: [-1] }], // disable sorting on last column (actions)
+            initComplete: function () {
+                const api = this.api();
+                // Connect external search input if it exists
+                const searchInput = document.getElementById('tableSearch');
+                if (searchInput) {
+                    searchInput.addEventListener('input', function () {
+                        api.search(this.value).draw();
+                    });
+                }
+            }
+        });
+    }
+}
+
+/* ── SweetAlert2 Delete Confirmation ── */
+window.confirmDelete = function (formId, label = 'cet élément') {
+    if (typeof Swal === 'undefined') return;
+
+    Swal.fire({
+        title: 'Supprimer ' + label + ' ?',
+        html: `<p style="font-size:14px;color:#64748B;margin:0">
+          Cette action est <strong>irréversible</strong>. 
+          Toutes les données liées seront perdues.</p>`,
+        icon: 'warning',
+        iconColor: '#FF4757',
+        showCancelButton: true,
+        confirmButtonText: '<i class="bi bi-trash-fill"></i>&nbsp; Supprimer',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: '#FF4757',
+        cancelButtonColor: '#64748B',
+        reverseButtons: true,
+        focusCancel: true,
+        customClass: {
+            popup: 'swal2-farm-popup',
+            title: 'swal2-farm-title',
+            actions: 'swal2-farm-actions',
+            confirmButton: 'swal2-confirm',
+            cancelButton: 'swal2-cancel'
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+};
+
+/* ── Form Submit Loading State ── */
+function initFormLoading() {
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function () {
+            // basic check for html5 validity before adding loading state
+            if (form.checkValidity()) {
+                const submitBtns = form.querySelectorAll('.btn-submit');
+                submitBtns.forEach(btn => {
+                    btn.classList.add('loading');
+                    // Prevent double submission visually
+                    btn.disabled = true;
+                    // Note: if disabled = true stops the form submission in some browsers,
+                    // we might need a hidden input or handle via JS.
+                    // For safe fallback, just remove pointer events.
+                    btn.style.pointerEvents = 'none';
+                });
+            }
+        });
+    });
+}
+
+/* ── Chart.js Global Config ── */
+function initChartJsConfig() {
+    if (typeof Chart !== 'undefined') {
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.size = 12;
+        Chart.defaults.color = '#94A3B8';
+        Chart.defaults.plugins.legend.labels.boxWidth = 8;
+        Chart.defaults.plugins.legend.labels.borderRadius = 4;
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+        Chart.defaults.plugins.tooltip.backgroundColor = '#0D1426';
+        Chart.defaults.plugins.tooltip.padding = 12;
+        Chart.defaults.plugins.tooltip.cornerRadius = 10;
+        Chart.defaults.plugins.tooltip.titleFont = { weight: '600', size: 13 };
+        Chart.defaults.plugins.tooltip.bodyColor = 'rgba(255,255,255,0.7)';
+
+        // Disable responsive resizing animation for snappier feel occasionally
+        // Chart.defaults.animation = false;
+    }
+}
+
+/* ── Dynamic Collection (Symfony Forms) ── */
+function initCollectionForms() {
+    const addSublotBtns = document.querySelectorAll('.btn-add-sublot');
+
+    addSublotBtns.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const collectionHolder = document.querySelector(this.dataset.collectionHolderClass);
+            if (!collectionHolder) return;
+
+            const template = collectionHolder.dataset.prototype;
+            const index = collectionHolder.dataset.index;
+
+            // Replace '__name__' with the current index
+            let newForm = template.replace(/__name__/g, index);
+
+            // Create DOM element for row wrapper
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'sublot-row';
+            rowDiv.setAttribute('data-aos', 'fade-up');
+
+            // Sublot number
+            const numDiv = document.createElement('div');
+            numDiv.className = 'sublot-number';
+            numDiv.innerText = (parseInt(index) + 1).toString().padStart(2, '0');
+
+            // Fields wrapper
+            const fieldsDiv = document.createElement('div');
+            fieldsDiv.className = 'sublot-fields';
+            fieldsDiv.innerHTML = newForm;
+
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'sublot-remove';
+            removeBtn.type = 'button';
+            removeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+            removeBtn.addEventListener('click', function () {
+                rowDiv.remove();
+                updateCollectionTotal();
+                updateSublotNumbers(collectionHolder);
+            });
+
+            rowDiv.appendChild(numDiv);
+            rowDiv.appendChild(fieldsDiv);
+            rowDiv.appendChild(removeBtn);
+
+            collectionHolder.appendChild(rowDiv);
+
+            collectionHolder.dataset.index = parseInt(index) + 1;
+
+            // Re-initialize plugins for new elements
+            initSelect2();
+            initFlatpickr();
+
+            // Attach calculation listeners to new fields
+            attachCalculationListeners(rowDiv);
+        });
+    });
+
+    // Handle existing remove buttons
+    document.querySelectorAll('.sublot-remove').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const row = this.closest('.sublot-row');
+            const holder = row.closest('.collection-holder');
+            row.remove();
+            updateCollectionTotal();
+            if (holder) updateSublotNumbers(holder);
+        });
+    });
+
+    // Initial attach
+    document.querySelectorAll('.sublot-row').forEach(row => {
+        attachCalculationListeners(row);
+    });
+
+    updateCollectionTotal();
+}
+
+function updateSublotNumbers(holder) {
+    const rows = holder.querySelectorAll('.sublot-row');
+    rows.forEach((row, idx) => {
+        const numDiv = row.querySelector('.sublot-number');
+        if (numDiv) numDiv.innerText = (idx + 1).toString().padStart(2, '0');
+    });
+}
+
+function attachCalculationListeners(row) {
+    // Modify selectors based on your actual form field classes/names 
+    const qtyInputs = row.querySelectorAll('.calc-qty');
+    const priceInputs = row.querySelectorAll('.calc-price');
+    const totalInput = row.querySelector('.calc-total'); // if read-only field
+
+    const calculateRow = () => {
+        let total = 0;
+        let qty = 0;
+        let price = 0;
+        if (qtyInputs.length > 0) qty = parseFloat(qtyInputs[0].value) || 0;
+        if (priceInputs.length > 0) price = parseFloat(priceInputs[0].value) || 0;
+
+        total = qty * price;
+        if (totalInput) totalInput.value = total.toFixed(3);
+        updateCollectionTotal();
+    };
+
+    qtyInputs.forEach(input => input.addEventListener('input', calculateRow));
+    priceInputs.forEach(input => input.addEventListener('input', calculateRow));
+}
+
+function updateCollectionTotal() {
+    const grandTotalEl = document.getElementById('grandTotal');
+    if (!grandTotalEl) return;
+
+    let total = 0;
+    // Assume each row has a .calc-total input or we calculate it manually if it doesn't
+    const rows = document.querySelectorAll('.sublot-row');
+    rows.forEach(row => {
+        const qtyInputs = row.querySelectorAll('.calc-qty');
+        const priceInputs = row.querySelectorAll('.calc-price');
+
+        let qty = 0;
+        let price = 0;
+        if (qtyInputs.length > 0) qty = parseFloat(qtyInputs[0].value) || 0;
+        if (priceInputs.length > 0) price = parseFloat(priceInputs[0].value) || 0;
+
+        total += (qty * price);
+    });
+
+    // Format TND
+    const formatted = new Intl.NumberFormat('fr-TN', { style: 'currency', currency: 'TND' }).format(total);
+    grandTotalEl.innerText = formatted;
+}
+
+/* ── Helper: Remove Filter Chip ── */
+window.removeFilter = function (filterName) {
+    // Logic to update the form and submit or redirect
+    console.log('Remove filter:', filterName);
+    const chip = document.querySelector(`.filter-chip[data-filter="${filterName}"]`);
+    if (chip) chip.remove();
+    // Submit form/reload here...
+};

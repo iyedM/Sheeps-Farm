@@ -1,17 +1,297 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Dashboard{% endblock %}
+
+{% block title %}Dashboard - FermeApp{% endblock %}
+
+{% block breadcrumb_current %}Dashboard{% endblock %}
+
 {% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Vue d'ensemble de votre ferme</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn-secondary">
+            <i class="bi bi-download"></i> Exporter
+        </button>
+        <a href="{{ path('app_mouton_index')|default('#') }}" class="btn-primary">
+            <i class="bi bi-plus-lg"></i> Nouveau Mouton
+        </a>
+    </div>
+</div>
+
 <div class="row g-3 mb-4">
-    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Total Moutons</h6><h3>{{ totalMoutons }}</h3></div></div></div>
-    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Vendus</h6><h3>{{ vendus }}</h3></div></div></div>
-    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Non Vendus</h6><h3>{{ nonVendus }}</h3></div></div></div>
-    <div class="col-md-3"><div class="card stat-card"><div class="card-body"><h6>Valeur Cheptel</h6><h3>{{ valeurCheptel|number_format(2, '.', ' ') }} TND</h3></div></div></div>
+    <!-- Stat 1: Total -->
+    <div class="col-12 col-md-6 col-xl-3" data-aos="fade-up" data-aos-delay="0">
+        <div class="stat-card" style="--card-accent-color: var(--accent);">
+            <div class="stat-top">
+                <div class="stat-icon" style="--icon-bg: rgba(0,214,143,0.1); --icon-color: var(--accent);">
+                    <i class="bi bi-clipboard-heart-fill"></i>
+                </div>
+                <!-- optional trend -->
+            </div>
+            <div class="stat-value" data-countup>{{ totalMoutons }}</div>
+            <div class="stat-label">Total Moutons</div>
+        </div>
+    </div>
+    
+    <!-- Stat 2: Non Vendus -->
+    <div class="col-12 col-md-6 col-xl-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="stat-card" style="--card-accent-color: var(--info);">
+            <div class="stat-top">
+                <div class="stat-icon" style="--icon-bg: rgba(0,153,255,0.1); --icon-color: var(--info);">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+            <div class="stat-value" data-countup>{{ nonVendus }}</div>
+            <div class="stat-label">Moutons Non Vendus</div>
+        </div>
+    </div>
+    
+    <!-- Stat 3: Vendus -->
+    <div class="col-12 col-md-6 col-xl-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-card" style="--card-accent-color: var(--danger);">
+            <div class="stat-top">
+                <div class="stat-icon" style="--icon-bg: rgba(255,71,87,0.1); --icon-color: var(--danger);">
+                    <i class="bi bi-bag-check-fill"></i>
+                </div>
+            </div>
+            <div class="stat-value" data-countup>{{ vendus }}</div>
+            <div class="stat-label">Moutons Vendus</div>
+        </div>
+    </div>
+    
+    <!-- Stat 4: Valeur -->
+    <div class="col-12 col-md-6 col-xl-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="stat-card" style="--card-accent-color: var(--purple);">
+            <div class="stat-top">
+                <div class="stat-icon" style="--icon-bg: rgba(124,58,237,0.1); --icon-color: var(--purple);">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+            <div class="stat-value" data-countup data-target="{{ valeurCheptel }}">0</div>
+            <div class="stat-label">Valeur Cheptel (TND)</div>
+        </div>
+    </div>
 </div>
+
 <div class="row g-3">
-    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartGenre" data-chart='{{ genreData|json_encode }}'></canvas></div></div></div>
-    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartRace" data-chart='{{ raceData|json_encode }}'></canvas></div></div></div>
-    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartOrigine" data-chart='{{ origineData|json_encode }}'></canvas></div></div></div>
-    <div class="col-md-6"><div class="card"><div class="card-body"><canvas id="chartGrange" data-chart='{{ grangeData|json_encode }}'></canvas></div></div></div>
-    <div class="col-12"><div class="card"><div class="card-body"><canvas id="chartEvolution" data-chart='{{ evolutionData|json_encode }}'></canvas></div></div></div>
+    <!-- Row 1: Line chart (col-8) + Donut race (col-4) -->
+    <div class="col-12 col-lg-8" data-aos="fade-up" data-aos-delay="400">
+        <div class="chart-card large">
+            <div class="chart-card-header">
+                <div>
+                    <h3 class="chart-title">Évolution Mensuelle</h3>
+                    <p class="chart-sub">Moutons enregistrés / vendus</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartEvolution"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+        <div class="chart-card large">
+            <div class="chart-card-header">
+                <div>
+                    <h3 class="chart-title">Race</h3>
+                    <p class="chart-sub">Répartition</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartRace"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Bar chart (col-5) + Donut genre (col-3) + Donut origine (col-4) -->
+    <div class="col-12 col-lg-5" data-aos="fade-up" data-aos-delay="600">
+        <div class="chart-card small">
+            <div class="chart-card-header">
+                <div>
+                    <h3 class="chart-title">Granges</h3>
+                    <p class="chart-sub">Moutons non vendus par grange</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartGrange"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-lg-3" data-aos="fade-up" data-aos-delay="700">
+        <div class="chart-card small">
+            <div class="chart-card-header">
+                <div>
+                    <h3 class="chart-title">Genre</h3>
+                    <p class="chart-sub">Males / Femelles</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartGenre"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-lg-4" data-aos="fade-up" data-aos-delay="800">
+        <div class="chart-card small">
+            <div class="chart-card-header">
+                <div>
+                    <h3 class="chart-title">Origine</h3>
+                    <p class="chart-sub">Interne / Externe</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartOrigine"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Chart === 'undefined') return;
+
+    const palette = ['#00D68F', '#0099FF', '#FF8C00', '#FF4757', '#7C3AED', '#14B8A6'];
+
+    // Data passed from Symfony
+    const rawEvolution = {{ evolutionData|json_encode|raw }};
+    const rawRace = {{ raceData|json_encode|raw }};
+    const rawGrange = {{ grangeData|json_encode|raw }};
+    const rawGenre = {{ genreData|json_encode|raw }};
+    const rawOrigine = {{ origineData|json_encode|raw }};
+
+    function generateLabelsAndData(dataArr, labelKey, dataKey) {
+        return {
+            labels: dataArr.map(d => d[labelKey]),
+            data: dataArr.map(d => d[dataKey])
+        };
+    }
+
+    // 1. Évolution (Line Chart)
+    const ctxEvo = document.getElementById('chartEvolution');
+    if (ctxEvo && rawEvolution && rawEvolution.length > 0) {
+        // Assume rawEvolution has { month: '2026-04', count: 12 } etc.
+        // Or if it needs specific parsing depending on the backend format:
+        const labels = rawEvolution.map(item => item.mois || 'Mois');
+        const dataVals = rawEvolution.map(item => item.total || 0);
+
+        const ctx = ctxEvo.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(0,214,143,0.25)');
+        gradient.addColorStop(1, 'rgba(0,214,143,0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Moutons enregistrés',
+                    data: dataVals,
+                    borderColor: '#00D68F',
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    tension: 0.45,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        grid: { color: 'rgba(0,0,0,0.04)', borderDash: [4,4] },
+                        beginAtZero: true
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // Donut Helper
+    function createDonut(canvasId, dataArr, labelKey, dataKey) {
+        const el = document.getElementById(canvasId);
+        if (!el || !dataArr || dataArr.length === 0) return;
+        const parsed = generateLabelsAndData(dataArr, labelKey, dataKey);
+        
+        new Chart(el, {
+            type: 'doughnut',
+            data: {
+                labels: parsed.labels,
+                datasets: [{
+                    data: parsed.data,
+                    backgroundColor: palette,
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '68%',
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+    }
+
+    // 2. Race (Donut)
+    createDonut('chartRace', rawRace, 'label', 'total');
+    
+    // 3. Genre (Donut)
+    createDonut('chartGenre', rawGenre, 'label', 'total');
+
+    // 4. Origine (Donut)
+    createDonut('chartOrigine', rawOrigine, 'label', 'total');
+
+    // 5. Grange (Bar)
+    const ctxGrange = document.getElementById('chartGrange');
+    if (ctxGrange && rawGrange && rawGrange.length > 0) {
+        const labels = rawGrange.map(item => item.label || 'Grange');
+        const dataVals = rawGrange.map(item => item.total || 0);
+        
+        const ctx = ctxGrange.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, '#00D68F');
+        gradient.addColorStop(1, '#0099FF');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Moutons',
+                    data: dataVals,
+                    backgroundColor: gradient,
+                    borderRadius: 8,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { 
+                        grid: { color: 'rgba(0,0,0,0.04)' },
+                        beginAtZero: true 
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

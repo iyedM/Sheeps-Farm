@@ -1,142 +1,230 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}FermeApp{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.8/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FermeApp - Tableau de Bord{% endblock %}</title>
+    
+    {# ── Font: Inter ── #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    {# ── Bootstrap 5.3 (Grid Base Only) ── #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    {# ── Bootstrap Icons 1.11 ── #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    {# ── DataTables CSS ── #}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
+    {# ── Select2 CSS ── #}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    {# ── Flatpickr CSS ── #}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    {# ── SweetAlert2 CSS ── #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.min.css">
+    
+    {# ── AOS CSS ── #}
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    {# ── Custom CSS ── #}
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
 </head>
 <body>
-{% if app.user %}
-    {% set current = app.request.attributes.get('_route') %}
-    {% set fullname = app.user.fullName|default(app.user.userIdentifier) %}
-    {% set initialA = (app.user.prenom|default('U')|slice(0,1)|upper) %}
-    {% set initialB = (app.user.nom|default('')|slice(0,1)|upper) %}
-    {% set initials = initialA ~ initialB %}
-    {% set role = app.user.roles|first %}
     <div class="app-shell">
-        <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
-
-        <aside id="appSidebar" class="app-sidebar">
+        
+        {# ── Sidebar ── #}
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M14 18C14 12.477 18.477 8 24 8C29.523 8 34 12.477 34 18C34 19.205 33.787 20.361 33.396 21.432C36.148 22.283 38 24.848 38 27.75C38 31.478 34.866 34.5 31 34.5H19C14.582 34.5 11 31.142 11 27C11 23.635 13.362 20.785 16.679 19.894C15.619 19.378 14.778 18.44 14.333 17.286" fill="#ECF0F1"/>
-                    <circle cx="18.5" cy="16.5" r="1.5" fill="#1B2A41"/>
-                    <path d="M34.5 30.5C34.5 30.5 36 31.2 36 33C36 34.8 34.8 36 33 36" stroke="#ECF0F1" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span class="logo-text fw-semibold">FermeApp</span>
+                <div class="sidebar-logo-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 12c-1.1-1.3-2.6-2-4.1-2h-1V8.6c1.3-.4 2.3-1.6 2.3-3.1 0-1.8-1.4-3.2-3.2-3.2-1.4 0-2.6.9-3.1 2.2-.4-1.3-1.6-2.2-3.1-2.2C5.1 2.3 3.6 3.7 3.6 5.5c0 1.5.9 2.7 2.3 3.1V10h-1C3.3 10 1.9 10.7.8 12c-.5.6-.8 1.4-.8 2.2V19c0 1.7 1.3 3 3 3h16c1.7 0 3-1.3 3-3v-4.8c0-.8-.3-1.6-.8-2.2zM5.6 5.5c0-.7.6-1.2 1.2-1.2s1.2.6 1.2 1.2-.6 1.2-1.2 1.2-1.2-.6-1.2-1.2zm8.8 0c0-.7.6-1.2 1.2-1.2s1.2.6 1.2 1.2-.6 1.2-1.2 1.2-1.2-.6-1.2-1.2zM3 20c-.6 0-1-.4-1-1v-4.8c0-.4.2-.8.4-1 .8-.8 1.9-1.2 2.6-1.2h2v7H3zm16-1c0 .6-.4 1-1 1H9v-7h10c.8 0 1.8.4 2.6 1.2.3.2.4.6.4 1V19z"/>
+                    </svg>
+                </div>
+                <div class="sidebar-logo-text">
+                    <span class="app-name">FermeApp</span>
+                    <span class="app-env">Production</span>
+                </div>
+                <button class="sidebar-collapse-btn" title="Réduire">
+                    <i class="bi bi-layout-sidebar"></i>
+                </button>
             </div>
-
-            <div class="sidebar-label">Navigation</div>
+            
+            <div class="sidebar-search">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Rechercher..." />
+                <kbd>⌘K</kbd>
+            </div>
+            
             <nav class="sidebar-nav">
-                <a class="nav-link {{ current == 'app_dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard') }}"><span class="nav-icon bi bi-grid-1x2-fill"></span><span class="nav-label">Dashboard</span></a>
-                <a class="nav-link {{ current starts with 'app_mouton' ? 'active' : '' }}" href="{{ path('app_mouton_index') }}"><span class="nav-icon bi bi-emoji-dizzy"></span><span class="nav-label">Moutons</span></a>
-                <a class="nav-link {{ current starts with 'app_grange' ? 'active' : '' }}" href="{{ path('app_grange_index') }}"><span class="nav-icon bi bi-building"></span><span class="nav-label">Granges</span></a>
-                <a class="nav-link {{ current starts with 'app_depense' ? 'active' : '' }}" href="{{ path('app_depense_index') }}"><span class="nav-icon bi bi-cash-stack"></span><span class="nav-label">Dépenses</span></a>
-                <a class="nav-link {{ current starts with 'app_commerce_achat' ? 'active' : '' }}" href="{{ path('app_commerce_achat_index') }}"><span class="nav-icon bi bi-bag-plus"></span><span class="nav-label">Achats</span></a>
-                <a class="nav-link {{ current starts with 'app_commerce_vente' ? 'active' : '' }}" href="{{ path('app_commerce_vente_index') }}"><span class="nav-icon bi bi-bag-check"></span><span class="nav-label">Ventes</span></a>
-                <a class="nav-link {{ current starts with 'app_facture_achat' ? 'active' : '' }}" href="{{ path('app_facture_achat_index') }}"><span class="nav-icon bi bi-file-earmark-arrow-down"></span><span class="nav-label">Factures Achat</span></a>
-                <a class="nav-link {{ current starts with 'app_facture_vente' ? 'active' : '' }}" href="{{ path('app_facture_vente_index') }}"><span class="nav-icon bi bi-file-earmark-arrow-up"></span><span class="nav-label">Factures Vente</span></a>
+                <div class="nav-section-label">Principal</div>
+                
+                <a href="{{ path('app_dashboard') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                    <span class="nav-item-label">Dashboard</span>
+                </a>
+                
+                <a href="{{ path('app_mouton_index') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-clipboard-heart"></i></span>
+                    <span class="nav-item-label">Moutons</span>
+                    <span class="nav-item-badge">247</span>
+                </a>
+                
+                <a href="{{ path('app_grange_index') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-building-fill"></i></span>
+                    <span class="nav-item-label">Granges</span>
+                </a>
+                
+                <div class="nav-section-label">Finance & Opérations</div>
+                
+                <a href="{{ path('app_depense_index') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-cash-coin"></i></span>
+                    <span class="nav-item-label">Dépenses</span>
+                </a>
+                
+                <a href="{{ path('app_commerce_achat_index') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-bag-plus-fill"></i></span>
+                    <span class="nav-item-label">Achats</span>
+                </a>
+                
+                <a href="{{ path('app_commerce_vente_index') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-bag-check-fill"></i></span>
+                    <span class="nav-item-label">Ventes</span>
+                </a>
+                
+                <a href="{{ path('app_facture_achat_index') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-file-earmark-arrow-down-fill"></i></span>
+                    <span class="nav-item-label">Factures Achat</span>
+                </a>
+                
+                <a href="{{ path('app_facture_vente_index') }}" class="nav-item">
+                    <span class="nav-item-icon"><i class="bi bi-file-earmark-arrow-up-fill"></i></span>
+                    <span class="nav-item-label">Factures Vente</span>
+                </a>
             </nav>
-
-            <div class="sidebar-user-card">
-                <div class="sidebar-user-inner">
-                    <span class="avatar">{{ initials }}</span>
-                    <div>
-                        <div class="text-white fw-semibold" style="line-height:1.2">{{ fullname }}</div>
-                        <span class="role-chip {{ role == 'ROLE_ADMIN' ? 'admin' : 'user' }}">{{ role == 'ROLE_ADMIN' ? 'Admin' : 'Utilisateur' }}</span>
+            
+            <div class="sidebar-user">
+                <div class="sidebar-user-card" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="sidebar-user-avatar">
+                        {% if app.user %}{{ app.user.userIdentifier|slice(0, 2)|upper }}{% else %}AA{% endif %}
                     </div>
+                    <div class="sidebar-user-info">
+                        <span class="sidebar-user-name">{% if app.user %}{{ app.user.userIdentifier|split('@')|first|capitalize }}{% else %}Ahmed Administrateur{% endif %}</span>
+                        <span class="sidebar-user-role">Administrateur</span>
+                    </div>
+                    <div class="sidebar-user-status"></div>
                 </div>
             </div>
         </aside>
 
-        <div class="app-main">
+        {# ── Main Wrapper ── #}
+        <div class="main-wrapper">
+            
+            {# ── Topbar ── #}
             <header class="topbar">
-                <div class="d-flex align-items-center gap-2">
-                    <button id="sidebarToggle" class="icon-btn d-md-none" type="button" aria-label="Menu">
-                        <i class="bi bi-list"></i>
+                <button class="topbar-mobile-toggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <nav class="topbar-breadcrumb">
+                    <span class="bc-parent">FermeApp</span>
+                    <i class="bi bi-chevron-right bc-sep"></i>
+                    <span class="bc-current">{% block breadcrumb_current %}Dashboard{% endblock %}</span>
+                </nav>
+                
+                <div class="topbar-right">
+                    <button class="topbar-btn" title="Recherche globale">
+                        <i class="bi bi-search"></i>
                     </button>
-                    <h5 class="mb-0">{% block page_title %}FermeApp{% endblock %}</h5>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <button class="icon-btn position-relative" type="button" aria-label="Notifications">
+                    
+                    <button class="topbar-btn" title="Notifications">
                         <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger rounded-circle"></span>
+                        <span class="notification-badge"></span>
                     </button>
-
-                    <div class="dropdown">
-                        <button class="btn btn-light border d-flex align-items-center gap-2" data-bs-toggle="dropdown" type="button">
-                            <span class="avatar">{{ initials }}</span>
-                            <span class="d-none d-sm-inline">{{ fullname }}</span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="min-width: 240px; border-radius: 12px;">
-                            <div class="px-2 pb-2 border-bottom mb-2">
-                                <div class="fw-semibold">{{ fullname }}</div>
-                                <span class="role-chip {{ role == 'ROLE_ADMIN' ? 'admin' : 'user' }}">{{ role == 'ROLE_ADMIN' ? 'ROLE_ADMIN' : 'ROLE_USER' }}</span>
-                            </div>
-                            <a class="dropdown-item text-danger rounded" href="{{ path('app_logout') }}">
-                                <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
-                            </a>
+                    
+                    <button class="topbar-btn theme-toggle" title="Thème">
+                        <i class="bi bi-moon-stars-fill"></i>
+                    </button>
+                    
+                    <div class="topbar-divider"></div>
+                    
+                    <div class="topbar-user dropdown">
+                        <div class="topbar-user-info text-end d-none d-sm-flex" data-bs-toggle="dropdown">
+                            <span class="topbar-user-name">{% if app.user %}{{ app.user.userIdentifier|split('@')|first|capitalize }}{% else %}Ahmed{% endif %}</span>
+                            <span class="role-badge role-admin">Admin</span>
                         </div>
+                        <div class="topbar-avatar" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                            {% if app.user %}{{ app.user.userIdentifier|slice(0, 2)|upper }}{% else %}AM{% endif %}
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profil</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Paramètres</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                        </ul>
+                        <i class="bi bi-chevron-down" style="font-size:11px;color:var(--text-muted); cursor: pointer;" data-bs-toggle="dropdown"></i>
                     </div>
                 </div>
             </header>
 
-            <main class="main-content">
+            {# ── Page Content ── #}
+            <main class="page-content">
                 {% block body %}{% endblock %}
             </main>
+            
         </div>
     </div>
-{% else %}
-    {% block guest_body %}{% endblock %}
-{% endif %}
 
-<div class="toast-stack">
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            {% set tone = label in ['error', 'danger'] ? 'error' : (label == 'warning' ? 'warning' : (label == 'info' ? 'info' : 'success')) %}
-            <div class="app-toast {{ tone }}">
-                <div class="d-flex align-items-start gap-2">
-                    <div>
-                        {% if tone == 'success' %}<i class="bi bi-check-circle-fill text-success"></i>{% endif %}
-                        {% if tone == 'error' %}<i class="bi bi-x-circle-fill text-danger"></i>{% endif %}
-                        {% if tone == 'warning' %}<i class="bi bi-exclamation-triangle-fill" style="color: var(--warning)"></i>{% endif %}
-                        {% if tone == 'info' %}<i class="bi bi-info-circle-fill text-info"></i>{% endif %}
+    {# ── Flash Toasts Container ── #}
+    <div id="toast-container">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="app-toast toast-{{ label == 'danger' ? 'error' : label }}" data-auto-dismiss="4000">
+                    <div class="toast-icon-wrap">
+                        {% if label == 'success' %}<i class="bi bi-check-circle-fill"></i>
+                        {% elseif label == 'danger' or label == 'error' %}<i class="bi bi-exclamation-octagon-fill"></i>
+                        {% elseif label == 'warning' %}<i class="bi bi-exclamation-triangle-fill"></i>
+                        {% else %}<i class="bi bi-info-circle-fill"></i>{% endif %}
                     </div>
-                    <div class="flex-grow-1">
-                        <div class="fw-semibold" style="font-size:13px">
-                            {% if tone == 'success' %}Succès{% endif %}
-                            {% if tone == 'error' %}Erreur{% endif %}
-                            {% if tone == 'warning' %}Attention{% endif %}
-                            {% if tone == 'info' %}Information{% endif %}
+                    <div class="toast-body">
+                        <div class="toast-title">
+                            {% if label == 'success' %}Succès
+                            {% elseif label == 'danger' or label == 'error' %}Erreur
+                            {% elseif label == 'warning' %}Attention
+                            {% else %}Information{% endif %}
                         </div>
-                        <div style="font-size:12px; color: var(--text-secondary)">{{ message }}</div>
+                        <div class="toast-message">{{ message }}</div>
                     </div>
-                    <button type="button" class="btn-close btn-sm" onclick="this.closest('.app-toast').remove()"></button>
+                    <button class="toast-close"><i class="bi bi-x"></i></button>
+                    <div class="toast-progress"></div>
                 </div>
-                <div class="toast-progress"></div>
-            </div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
-</div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.8/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-{% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
-{% endblock %}
+    {# ── Scripts ── #}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.css"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.6/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
 </body>
 </html>

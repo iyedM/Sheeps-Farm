@@ -1,70 +1,133 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Inscription | FermeApp</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - FermeApp</title>
+    
+    {# ── Font: Inter ── #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    {# ── Bootstrap 5.3 ── #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    {# ── Bootstrap Icons ── #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    {# ── AOS CSS ── #}
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    {# ── Custom CSS ── #}
     {{ encore_entry_link_tags('app') }}
 </head>
 <body>
-<div class="min-vh-100 d-flex">
-    <section class="d-none d-md-flex flex-column justify-content-center px-5" style="width:50%; background:#1B2A41; color:#fff;">
-        <div style="max-width:420px">
-            <svg viewBox="0 0 120 120" width="120" height="120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-4">
-                <path d="M35 60c0-14 11-25 25-25s25 11 25 25-11 25-25 25H45c-11 0-20-9-20-20 0-8 5-15 12-18" fill="#ECF0F1"/>
-                <circle cx="48" cy="56" r="3" fill="#1B2A41"/>
-            </svg>
-            <h1 style="font-size:32px; font-weight:600">FermeApp</h1>
-            <p style="color:#B8C5D6">Créez un compte pour suivre les moutons, ventes, achats et factures dans une expérience unifiée.</p>
-        </div>
-    </section>
-
-    <section class="d-flex align-items-center justify-content-center px-4" style="width:100%; background:#fff;">
-        <div style="width:100%; max-width:520px;">
-            <h2 class="mb-1" style="font-weight:600; letter-spacing:-.02em">Inscription</h2>
-            <p class="text-secondary mb-4">Créer votre compte FermeApp.</p>
-
-            {{ form_start(form) }}
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label small text-muted">Nom</label>
-                    {{ form_widget(form.nom, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
-                    {{ form_errors(form.nom) }}
+    <div class="auth-shell">
+        <div class="auth-left">
+            <div class="auth-brand" data-aos="fade-down">
+                <div class="auth-logo">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 12c-1.1-1.3-2.6-2-4.1-2h-1V8.6c1.3-.4 2.3-1.6 2.3-3.1 0-1.8-1.4-3.2-3.2-3.2-1.4 0-2.6.9-3.1 2.2-.4-1.3-1.6-2.2-3.1-2.2C5.1 2.3 3.6 3.7 3.6 5.5c0 1.5.9 2.7 2.3 3.1V10h-1C3.3 10 1.9 10.7.8 12c-.5.6-.8 1.4-.8 2.2V19c0 1.7 1.3 3 3 3h16c1.7 0 3-1.3 3-3v-4.8c0-.8-.3-1.6-.8-2.2zM5.6 5.5c0-.7.6-1.2 1.2-1.2s1.2.6 1.2 1.2-.6 1.2-1.2 1.2-1.2-.6-1.2-1.2zm8.8 0c0-.7.6-1.2 1.2-1.2s1.2.6 1.2 1.2-.6 1.2-1.2 1.2-1.2-.6-1.2-1.2zM3 20c-.6 0-1-.4-1-1v-4.8c0-.4.2-.8.4-1 .8-.8 1.9-1.2 2.6-1.2h2v7H3zm16-1c0 .6-.4 1-1 1H9v-7h10c.8 0 1.8.4 2.6 1.2.3.2.4.6.4 1V19z"/>
+                    </svg>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label small text-muted">Prénom</label>
-                    {{ form_widget(form.prenom, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
-                    {{ form_errors(form.prenom) }}
-                </div>
-                <div class="col-12">
-                    <label class="form-label small text-muted">Email</label>
-                    {{ form_widget(form.email, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
-                    {{ form_errors(form.email) }}
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small text-muted">Mot de passe</label>
-                    {{ form_widget(form.plainPassword, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
-                    {{ form_errors(form.plainPassword) }}
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small text-muted">Confirmer</label>
-                    {{ form_widget(form.confirmPassword, {attr: {class: 'form-control border-0 border-bottom rounded-0 px-0'}}) }}
-                    {{ form_errors(form.confirmPassword) }}
-                </div>
+                <h1 class="auth-app-name">FermeApp</h1>
             </div>
-
-            <button type="submit" class="btn btn-primary w-100 py-2 mt-4" style="height:48px;">Créer mon compte</button>
-            {{ form_end(form) }}
-
-            <p class="text-center mt-3 mb-0 text-secondary">
-                Déjà inscrit ?
-                <a href="{{ path('app_login') }}" style="color:var(--accent); font-weight:600;">Se connecter</a>
-            </p>
+            
+            <div class="auth-hero-text" data-aos="fade-right" data-aos-delay="100">
+                <h2>Rejoignez-nous<br>dès aujourd'hui.</h2>
+                <p>Démarrez la gestion centralisée de votre élevage en toute simplicité.</p>
+            </div>
+            
+            <div class="auth-stats" data-aos="fade-up" data-aos-delay="200">
+                <span class="auth-stat-pill"><i class="bi bi-person-plus"></i> Inscription Rapide</span>
+                <span class="auth-stat-pill"><i class="bi bi-clock-history"></i> Support 24/7</span>
+            </div>
         </div>
-    </section>
-</div>
-{{ encore_entry_script_tags('app') }}
+        
+        <div class="auth-right">
+            <div class="auth-card" data-aos="fade-left" data-aos-delay="150" style="max-width: 480px;">
+                <h2 class="auth-title">Inscription</h2>
+                <p class="auth-sub">Créez votre compte FermeApp</p>
+                
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    
+                    {% if not form.vars.valid %}
+                        <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                            {{ form_errors(form) }}
+                        </div>
+                    {% endif %}
+
+                    <div class="row gx-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+                                <label>Prénom</label>
+                                <div class="invalid-feedback d-block">{{ form_errors(form.prenom) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                                <label>Nom</label>
+                                <div class="invalid-feedback d-block">{{ form_errors(form.nom) }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'name@example.com'}}) }}
+                        <label>Adresse email</label>
+                        <div class="invalid-feedback d-block">{{ form_errors(form.email) }}</div>
+                    </div>
+                    
+                    <div class="row gx-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'}}) }}
+                                <label>Mot de passe</label>
+                                <div class="invalid-feedback d-block">{{ form_errors(form.plainPassword) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="form-floating">
+                                {{ form_widget(form.confirmPassword, {'attr': {'class': 'form-control', 'placeholder': 'Confirmer'}}) }}
+                                <label>Confirmer</label>
+                                <div class="invalid-feedback d-block">{{ form_errors(form.confirmPassword) }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary btn-lg w-100 btn-submit" type="submit">
+                        <span class="btn-text">Créer mon compte</span>
+                        <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
+                    </button>
+                    
+                    <div style="margin-top: 24px; text-align: center; font-size: 13px; color: var(--text-muted);">
+                        Vous avez déjà un compte ? <a href="{{ path('app_login') }}" style="color: var(--accent); font-weight: 600; text-decoration: none;">Se connecter</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+    {# ── Scripts ── #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    {{ encore_entry_script_tags('app') }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof AOS !== 'undefined') AOS.init({ duration: 400, once: true });
+            
+            const form = document.querySelector('form');
+            if(form) {
+                form.addEventListener('submit', function() {
+                    const btn = this.querySelector('.btn-submit');
+                    btn.classList.add('loading');
+                    btn.style.pointerEvents = 'none';
+                });
+            }
+        });
+    </script>
 </body>
 </html>
