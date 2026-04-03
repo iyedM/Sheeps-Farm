@@ -1,12 +1,99 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Facture Vente #{{ facture.id }}{% endblock %}
+
+{% block title %}Facture Vente #{{ facture.id }} - FermeApp{% endblock %}
+{% block breadcrumb_current %}Factures Vente > Détails{% endblock %}
+
 {% block body %}
-<div class="card"><div class="card-body">
-<p>Client: <strong>{{ facture.client }}</strong> ({{ facture.numeroClient }})</p>
-<p>Date: {{ facture.dateVente|date('Y-m-d') }}</p>
-<table class="table"><thead><tr><th>ID</th><th>Race</th><th>Genre</th><th>Age</th><th>Prix</th></tr></thead><tbody>
-{% for m in facture.moutons %}<tr><td>{{ m.id }}</td><td>{{ m.race }}</td><td>{{ m.genre }}</td><td>{{ m.currentAge }}</td><td>{{ m.prix|number_format(2) }}</td></tr>{% endfor %}
-</tbody></table>
-<h4>Total: {{ facture.montantTotal|number_format(2) }} TND</h4>
-</div></div>
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Facture de Vente : FAC-V-{{ '%04d'|format(facture.id) }}</h1>
+        <p class="page-subtitle">Détails de la facture adressée au client</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_facture_vente_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+        <a href="{{ path('app_facture_vente_pdf', {id: facture.id}) }}" target="_blank" class="btn-primary" style="background:#ff4757; color:white;">
+            <i class="bi bi-file-earmark-pdf-fill"></i> Télécharger PDF
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4" data-aos="fade-right" data-aos-delay="100">
+        <div class="form-card h-100">
+            <div class="form-card-header">
+                <h3><i class="bi bi-receipt-cutoff"></i> Résumé de Facturation</h3>
+            </div>
+            <div class="form-card-body">
+                <div class="detail-group mb-4">
+                    <label class="detail-label">Client</label>
+                    <div class="detail-value fw-bold" style="font-size:16px;">
+                        {{ facture.client }} 
+                        <span class="badge" style="background:var(--card-bg-hover); color:var(--text-muted); border:1px solid var(--card-border);">{{ facture.numeroClient }}</span>
+                    </div>
+                </div>
+                <div class="detail-group mb-4">
+                    <label class="detail-label">Date de Vente</label>
+                    <div class="detail-value">
+                        <span class="badge-status" style="background: var(--bg-hover); color: var(--text-secondary); border-radius: var(--radius-sm);">
+                            <i class="bi bi-calendar3 me-1"></i> {{ facture.dateVente|date('d/m/Y') }}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-group">
+                    <label class="detail-label">Montant Total à Payer</label>
+                    <div class="detail-value">
+                        <h2 style="color:#00d68f; margin:0;">{{ facture.montantTotal|number_format(3, '.', ' ') }} <span style="font-size:14px;color:var(--text-muted);">TND</span></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8 mb-4" data-aos="fade-left" data-aos-delay="200">
+        <div class="table-card h-100">
+            <div class="table-card-header">
+                <div>
+                    <h3>Moutons Rattachés</h3>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table dt-table" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Identifiant</th>
+                            <th>Race</th>
+                            <th>Genre/Age</th>
+                            <th class="text-end">Prix Vendu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in facture.moutons %}
+                        <tr>
+                            <td><strong>#{{ m.id }}</strong></td>
+                            <td><span style="font-weight: 500;">{{ m.race }}</span></td>
+                            <td>
+                                {% if m.genre == 'Mâle' %}
+                                    <span class="badge-genre badge-male me-1"><i class="bi bi-gender-male"></i></span>
+                                {% else %}
+                                    <span class="badge-genre badge-female me-1"><i class="bi bi-gender-female"></i></span>
+                                {% endif %}
+                                {{ m.currentAge }} mois
+                            </td>
+                            <td class="text-end">
+                                <strong style="color:#00d68f;">{{ m.prix|number_format(3, '.', ' ') }} TND</strong>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">Aucu mouton facturé trouvé.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

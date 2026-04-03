@@ -1,3 +1,90 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Modifier Achat{% endblock %}
-{% block body %}<div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-success">Mettre à jour</button>{{ form_end(form) }}</div></div>{% endblock %}
+
+{% block title %}Modifier l'Achat - FermeApp{% endblock %}
+{% block breadcrumb_current %}Achats > Modifier{% endblock %}
+
+{% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Modifier l'Achat</h1>
+        <p class="page-subtitle">Mettre à jour les informations de l'acquisition du lot #{{ commerce_achat.id }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_commerce_achat_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="bi bi-pencil-fill"></i> Édition d'Achat</h3>
+                <p>Correction des informations sur la transaction passée avec {{ commerce_achat.fournisseur }}.</p>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'class': 'modern-form', 'novalidate': 'novalidate'}}) }}
+                
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Fournisseur</label>
+                        {{ form_widget(form.fournisseur, {'attr': {'class': 'form-control'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.fournisseur) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">N° Téléphone Fournisseur</label>
+                        {{ form_widget(form.numeroFournisseur, {'attr': {'class': 'form-control'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.numeroFournisseur) }}</div>
+                    </div>
+                </div>
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Race</label>
+                        {{ form_widget(form.race, {'attr': {'class': 'form-control'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.race) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Date d'Achat</label>
+                        {{ form_widget(form.dateAchat, {'attr': {'class': 'form-control datepicker'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.dateAchat) }}</div>
+                    </div>
+                </div>
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Quantité (Têtes)</label>
+                        {{ form_widget(form.quantite, {'attr': {'class': 'form-control'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.quantite) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Prix Unitaire (TND)</label>
+                        <div class="input-group">
+                            {{ form_widget(form.prixUnitaire, {'attr': {'class': 'form-control'}}) }}
+                            <span class="input-group-text border-0" style="background:var(--bg-hover);">TND</span>
+                        </div>
+                        <div class="invalid-feedback d-block">{{ form_errors(form.prixUnitaire) }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn-primary btn-submit" type="submit">
+                        <i class="bi bi-check-lg"></i> Enregistrer les modifications
+                        <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
+                    </button>
+                    <a href="{{ path('app_commerce_achat_index') }}" class="btn-secondary">Annuler</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

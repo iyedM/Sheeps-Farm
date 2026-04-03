@@ -1,18 +1,267 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Nouvelle Facture Achat{% endblock %}
+
+{% block title %}Nouvelle Facture Achat - FermeApp{% endblock %}
+{% block breadcrumb_current %}Factures Achat > Nouvelle{% endblock %}
+
+{% form_theme form _self %}
+
+{# --- THEME PREMIUM POUR CHAQUE LIGNE DE SOUS-LOT (WIDGET) --- #}
+{% block _facture_achat_sousLots_entry_widget %}
+    <div class="sublot-row" data-aos="fade-up">
+        <div class="sublot-number-circle">{{ (form.vars.name|default(0) | number_format) + 1 }}</div>
+        <div class="sublot-fields w-100">
+            <div class="row g-2 align-items-center m-0">
+                <div class="col-md-2" title="Race">
+                    {{ form_widget(form.race, {'attr': {'class': 'form-control form-control-sm', 'placeholder': 'Race'}}) }}
+                </div>
+                <div class="col-md-1" title="Âge">
+                    {{ form_widget(form.age, {'attr': {'class': 'form-control form-control-sm', 'placeholder': 'Âge'}}) }}
+                </div>
+                <div class="col-md-2" title="Genre">
+                    {{ form_widget(form.genre, {'attr': {'class': 'form-select form-select-sm'}}) }}
+                </div>
+                <div class="col-md-2" title="Prix">
+                    <div class="input-group input-group-sm">
+                        {{ form_widget(form.prix, {'attr': {'class': 'form-control item-prix', 'placeholder': 'Prix'}}) }}
+                        <span class="input-group-text py-0 px-2" style="font-size:10px;">TND</span>
+                    </div>
+                </div>
+                <div class="col-md-2" title="Quantité">
+                    {{ form_widget(form.quantite, {'attr': {'class': 'form-control form-control-sm item-qty', 'placeholder': 'Qté'}}) }}
+                </div>
+                <div class="col-md-3" title="Grange">
+                    {{ form_widget(form.grange, {'attr': {'class': 'form-select form-select-sm'}}) }}
+                </div>
+                <div style="display:none">{{ form_rest(form) }}</div>
+            </div>
+        </div>
+        <button class="sublot-remove-btn" type="button" tabindex="-1" title="Supprimer la ligne">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+{% endblock %}
+
 {% block body %}
-<div class="card"><div class="card-body">
-{{ form_start(form) }}
-{{ form_row(form.fournisseur) }}
-{{ form_row(form.dateAchat) }}
-<h5>Sous-lots</h5>
-<div data-collection-holder data-prototype="{{ form_widget(form.sousLots.vars.prototype)|e('html_attr') }}">
-	{% for sousLotForm in form.sousLots %}
-		<div class="border rounded p-2 mb-2">{{ form_row(sousLotForm) }}</div>
-	{% endfor %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Nouvelle Facture d'Achat</h1>
+        <p class="page-subtitle">Gestion précise des entrées de stock par sous-lots</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_facture_achat_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
 </div>
-<button type="button" class="btn btn-outline-primary my-2" id="add-row">Ajouter ligne</button><br>
-<button class="btn btn-success">Enregistrer</button>
-{{ form_end(form) }}
-</div></div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-12">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="bi bi-receipt"></i> Création de Facture</h3>
+                <p>Veuillez remplir les informations du fournisseur et les lignes de bétail.</p>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'class': 'modern-form', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="form-section">
+                    <h4 class="form-section-title">En-tête de Facture</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small mb-1">Fournisseur / Provenance</label>
+                            {{ form_widget(form.fournisseur, {'attr': {'class': 'form-control', 'placeholder': 'Nom du vendeur'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small mb-1">Date d'opération</label>
+                            {{ form_widget(form.dateAchat, {'attr': {'class': 'form-control datepicker'}}) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="form-section-title mb-0">Détail des Sous-lots</h4>
+                        <button type="button" class="btn-primary btn-sm btn-add-sublot" data-collection-holder-class=".collection-holder">
+                            <i class="bi bi-plus-lg"></i> Ajouter un lot
+                        </button>
+                    </div>
+                    
+                    <div class="sublots-wrapper">
+                        {# En-tête du tableau #}
+                        <div class="sublot-table-header d-none d-md-flex">
+                            <div style="width: 40px; text-align: center;">#</div>
+                            <div class="flex-grow-1 px-2">
+                                <div class="row g-2 m-0 p-0">
+                                    <div class="col-md-2 small fw-bold">RACE</div>
+                                    <div class="col-md-1 small fw-bold">ÂGE</div>
+                                    <div class="col-md-2 small fw-bold">GENRE</div>
+                                    <div class="col-md-2 small fw-bold">PRIX UNIT.</div>
+                                    <div class="col-md-2 small fw-bold">QTÉ</div>
+                                    <div class="col-md-3 small fw-bold">AFFECTATION</div>
+                                </div>
+                            </div>
+                            <div style="width: 30px;"></div>
+                        </div>
+
+                        {# Liste des sous-lots #}
+                        <div class="collection-holder" 
+                             data-index="{{ form.sousLots|length }}" 
+                             data-prototype="{{ form_widget(form.sousLots.vars.prototype)|e('html_attr') }}">
+                            {% for sousLotForm in form.sousLots %}
+                                {{ form_widget(sousLotForm) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions mt-5 pt-3" style="border-top:1px solid var(--card-border);">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div class="total-summary">
+                            <span class="text-muted small">TOTAL GÉNÉRAL :</span>
+                            <h3 id="grandTotal" class="m-0 fw-bold" style="color: var(--accent);">0.00 TND</h3>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn-primary btn-lg">
+                                <i class="bi bi-check-lg"></i> Enregistrer
+                            </button>
+                            <a href="{{ path('app_facture_achat_index') }}" class="btn-secondary btn-lg">Annuler</a>
+                        </div>
+                    </div>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* --- DESIGN SYSTEM PREMIUM RÉTABLI --- */
+.sublots-wrapper {
+    background: var(--bg-hover);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    border: 1px solid var(--card-border);
+}
+.sublot-table-header {
+    background: transparent;
+    padding: 8px 15px;
+    margin-bottom: 5px;
+    color: var(--text-muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.sublot-row {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+.sublot-row:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+.sublot-number-circle {
+    width: 26px;
+    height: 26px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+.sublot-fields .form-control, .sublot-fields .form-select {
+    border-color: var(--card-border);
+    font-size: 13px;
+    height: 36px;
+    background: var(--card-bg);
+}
+.sublot-fields .form-control:focus, .sublot-fields .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+.sublot-remove-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: var(--danger-light);
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sublot-remove-btn:hover {
+    background: var(--danger);
+    color: white;
+}
+.input-group-text { font-size: 10px; font-weight: 700; background: var(--bg-hover); }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.querySelector('.btn-add-sublot');
+    const container = document.querySelector('.collection-holder');
+    
+    if (addBtn) {
+        addBtn.addEventListener('click', function() {
+            let index = parseInt(container.dataset.index);
+            let prototype = container.dataset.prototype;
+            let newForm = prototype.replace(/__name__/g, index);
+            
+            let temp = document.createElement('div');
+            temp.innerHTML = newForm;
+            let row = temp.firstElementChild;
+            
+            let num = row.querySelector('.sublot-number-circle');
+            if (num) num.textContent = index + 1;
+            
+            container.appendChild(row);
+            container.dataset.index = index + 1;
+            recalculateGrandTotal();
+        });
+    }
+
+    container.addEventListener('click', function(e) {
+        if (e.target.closest('.sublot-remove-btn')) {
+            e.target.closest('.sublot-row').remove();
+            updateRowIndices();
+            recalculateGrandTotal();
+        }
+    });
+
+    function updateRowIndices() {
+        const rows = container.querySelectorAll('.sublot-row');
+        rows.forEach((row, i) => {
+            let num = row.querySelector('.sublot-number-circle');
+            if (num) num.textContent = i + 1;
+        });
+        container.dataset.index = rows.length;
+    }
+
+    function recalculateGrandTotal() {
+        let total = 0;
+        document.querySelectorAll('.sublot-row').forEach(row => {
+            const p = parseFloat(row.querySelector('.item-prix')?.value || 0);
+            const q = parseFloat(row.querySelector('.item-qty')?.value || 0);
+            total += (p * q);
+        });
+        document.getElementById('grandTotal').textContent = total.toLocaleString('fr-FR', {minimumFractionDigits: 2}) + ' TND';
+    }
+
+    container.addEventListener('input', recalculateGrandTotal);
+    recalculateGrandTotal();
+});
+</script>
 {% endblock %}

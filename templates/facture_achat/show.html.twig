@@ -1,12 +1,91 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Facture Achat #{{ facture.id }}{% endblock %}
+
+{% block title %}Facture Achat #{{ facture.id }} - FermeApp{% endblock %}
+{% block breadcrumb_current %}Factures Achat > Détails{% endblock %}
+
 {% block body %}
-<div class="card"><div class="card-body">
-<p>Fournisseur: <strong>{{ facture.fournisseur }}</strong></p>
-<p>Date: {{ facture.dateAchat|date('Y-m-d') }}</p>
-<table class="table"><thead><tr><th>Race</th><th>Age</th><th>Genre</th><th>Qte</th><th>PU</th><th>Sous-total</th></tr></thead><tbody>
-{% for s in facture.sousLots %}<tr><td>{{ s.race }}</td><td>{{ s.age }}</td><td>{{ s.genre }}</td><td>{{ s.quantite }}</td><td>{{ s.prix }}</td><td>{{ s.sousTotal }}</td></tr>{% endfor %}
-</tbody></table>
-<h4>Total: {{ facture.totalGlobal|number_format(2) }} TND</h4>
-</div></div>
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Facture d'Achat : FAC-A-{{ '%04d'|format(facture.id) }}</h1>
+        <p class="page-subtitle">Détails de la transaction d'achat de moutons</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_facture_achat_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+        <a href="{{ path('app_facture_achat_pdf', {id: facture.id}) }}" target="_blank" class="btn-primary" style="background:#ff4757; color:white;">
+            <i class="bi bi-file-earmark-pdf-fill"></i> Télécharger PDF
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4" data-aos="fade-right" data-aos-delay="100">
+        <div class="form-card h-100">
+            <div class="form-card-header">
+                <h3><i class="bi bi-receipt"></i> À propos de la facture</h3>
+            </div>
+            <div class="form-card-body">
+                <div class="detail-group mb-4">
+                    <label class="detail-label">Fournisseur</label>
+                    <div class="detail-value fw-bold" style="font-size:16px;">{{ facture.fournisseur }}</div>
+                </div>
+                <div class="detail-group mb-4">
+                    <label class="detail-label">Date d'Achat</label>
+                    <div class="detail-value">
+                        <span class="badge-status" style="background: var(--bg-hover); color: var(--text-secondary); border-radius: var(--radius-sm);">
+                            <i class="bi bi-calendar3 me-1"></i> {{ facture.dateAchat|date('d/m/Y') }}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-group">
+                    <label class="detail-label">Montant Total Global</label>
+                    <div class="detail-value">
+                        <h2 style="color:var(--accent); margin:0;">{{ facture.totalGlobal|number_format(3, '.', ' ') }} <span style="font-size:14px;color:var(--text-muted);">TND</span></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8 mb-4" data-aos="fade-left" data-aos-delay="200">
+        <div class="table-card h-100">
+            <div class="table-card-header">
+                <div>
+                    <h3>Lignes de Sous-lots Mémorisées</h3>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table dt-table" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Race</th>
+                            <th>Genre/Age</th>
+                            <th>Quantité</th>
+                            <th>Prix U.</th>
+                            <th class="text-end">Sous-total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in facture.sousLots %}
+                        <tr>
+                            <td><span style="font-weight: 500;">{{ s.race }}</span></td>
+                            <td>{{ s.genre }} ({{ s.age }} mois)</td>
+                            <td><span class="badge" style="background-color: var(--accent); color: white; border-radius: var(--radius-sm);">{{ s.quantite }}</span></td>
+                            <td>{{ s.prix|number_format(3, '.', ' ') }} TND</td>
+                            <td class="text-end">
+                                <strong style="color:var(--accent);">{{ s.sousTotal|number_format(3, '.', ' ') }} TND</strong>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">Cette facture ne contient aucune ligne de sous-lots.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

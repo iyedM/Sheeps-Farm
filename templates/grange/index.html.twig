@@ -1,14 +1,104 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Granges{% endblock %}
+
+{% block title %}Granges - FermeApp{% endblock %}
+{% block breadcrumb_current %}Granges{% endblock %}
+
 {% block body %}
-<div class="mb-3"><a href="{{ path('app_grange_new') }}" class="btn btn-success">Nouvelle grange</a></div>
-<div class="alert alert-info">Total: {{ stats.total }} | Actives: {{ stats.actives }}</div>
-<table class="table datatable" data-server-pagination="1"><thead><tr><th>ID</th><th>Nom</th><th>Localisation</th><th></th></tr></thead><tbody>
-{% for g in pagination %}<tr><td>{{ g.id }}</td><td>{{ g.nom }}</td><td>{{ g.localisation }}</td><td>
-<a class="btn btn-sm btn-secondary" href="{{ path('app_grange_show',{id:g.id}) }}">Voir</a>
-<a class="btn btn-sm btn-primary" href="{{ path('app_grange_edit',{id:g.id}) }}">Edit</a>
-<form class="d-inline delete-form" method="post" action="{{ path('app_grange_delete',{id:g.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete_grange_'~g.id) }}"><button class="btn btn-sm btn-danger">Del</button></form>
-</td></tr>{% endfor %}
-</tbody></table>
-{{ knp_pagination_render(pagination) }}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Granges</h1>
+        <p class="page-subtitle">Gestion de vos espaces d'élevage</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_grange_new') }}" class="btn-primary">
+            <i class="bi bi-plus-lg"></i> Nouvelle grange
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4" data-aos="fade-down" data-aos-delay="100">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card" style="box-shadow: none; border: 1px solid var(--card-border);">
+            <div class="stat-icon" style="--icon-bg: rgba(0, 153, 255, 0.1); --icon-color: #0099ff;">
+                <i class="bi bi-house-door"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total</h3>
+                <div class="stat-value">{{ stats.total }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card" style="box-shadow: none; border: 1px solid var(--card-border);">
+            <div class="stat-icon" style="--icon-bg: rgba(0, 214, 143, 0.1); --icon-color: #00d68f;">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Actives</h3>
+                <div class="stat-value">{{ stats.actives }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-card" data-aos="fade-up" data-aos-delay="200">
+    <div class="table-card-header">
+        <div>
+            <h3>Annuaire des Granges</h3>
+            <span class="record-count">{{ pagination.getTotalItemCount() }} résultats</span>
+        </div>
+        <div class="table-actions">
+            <div class="search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Rechercher (page)..." class="table-search" id="tableSearch"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dt-table dt-server" width="100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Localisation</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in pagination %}
+                <tr>
+                    <td><strong>#{{ g.id }}</strong></td>
+                    <td>{{ g.nom }}</td>
+                    <td><span class="badge-status" style="background: var(--bg-hover); color: var(--text-secondary); border-radius: var(--radius-sm);"><i class="bi bi-geo-alt me-1"></i> {{ g.localisation }}</span></td>
+                    <td class="text-end">
+                        <div class="row-actions justify-content-end">
+                            <a href="{{ path('app_grange_show', {id:g.id}) }}" class="action-btn action-view" title="Voir">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a href="{{ path('app_grange_edit', {id:g.id}) }}" class="action-btn action-edit" title="Modifier">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <form method="post" action="{{ path('app_grange_delete', {id:g.id}) }}" class="d-inline" id="form-delete-grange-{{ g.id }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_grange_' ~ g.id) }}">
+                                <button type="button" class="action-btn action-delete" title="Supprimer" onclick="confirmDelete('form-delete-grange-{{ g.id }}', 'la grange {{ g.nom|escape('js') }}')">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">Aucune grange trouvée.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="table-pagination-wrapper">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+</div>
 {% endblock %}

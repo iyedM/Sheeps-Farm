@@ -1,3 +1,84 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Nouvelle Facture Vente{% endblock %}
-{% block body %}<div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-success">Enregistrer</button>{{ form_end(form) }}</div></div>{% endblock %}
+
+{% block title %}Nouvelle Facture Vente - FermeApp{% endblock %}
+{% block breadcrumb_current %}Factures Vente > Nouvelle{% endblock %}
+
+{% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Nouvelle Facture de Vente</h1>
+        <p class="page-subtitle">Générer un reçu officiel pour vos clients lors d'une cession de bétail</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_facture_vente_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="bi bi-receipt-cutoff"></i> Détails de Facturation</h3>
+                <p>Informations client et sélection du cheptel à facturer.</p>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'class': 'modern-form', 'novalidate': 'novalidate'}}) }}
+                
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Nom du Client</label>
+                        {{ form_widget(form.client, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Ali Mohamed'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.client) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">N° Identifiant/Tél Client</label>
+                        {{ form_widget(form.numeroClient, {'attr': {'class': 'form-control', 'placeholder': '00 000 000'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.numeroClient) }}</div>
+                    </div>
+                </div>
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Date de Vente</label>
+                        {{ form_widget(form.dateVente, {'attr': {'class': 'form-control datepicker'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.dateVente) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Frais Additionnels (TND)</label>
+                        <div class="input-group">
+                            {{ form_widget(form.prixAdditionnel, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                            <span class="input-group-text border-0" style="background:var(--bg-hover);">TND</span>
+                        </div>
+                        <div class="invalid-feedback d-block">{{ form_errors(form.prixAdditionnel) }}</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Sélection des Moutons à vendre</label>
+                    {{ form_widget(form.moutons, {'attr': {'class': 'form-select select2-enabled', 'placeholder': 'Choisir les têtes...'}}) }}
+                    <div class="small text-muted mt-1"><i class="bi bi-info-circle"></i> Seuls les moutons non encore vendus apparaissent dans cette liste.</div>
+                    <div class="invalid-feedback d-block">{{ form_errors(form.moutons) }}</div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn-primary btn-submit" type="submit">
+                        <i class="bi bi-plus-circle"></i> Générer la Facture
+                        <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
+                    </button>
+                    <a href="{{ path('app_facture_vente_index') }}" class="btn-secondary">Annuler</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

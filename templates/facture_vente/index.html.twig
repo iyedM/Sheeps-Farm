@@ -1,12 +1,75 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Factures Vente{% endblock %}
+
+{% block title %}Factures Vente - FermeApp{% endblock %}
+{% block breadcrumb_current %}Factures > Ventes{% endblock %}
+
 {% block body %}
-<a href="{{ path('app_facture_vente_new') }}" class="btn btn-success mb-3">Nouvelle facture</a>
-<table class="table datatable" data-server-pagination="1"><thead><tr><th>ID</th><th>Client</th><th>Date</th><th>Total</th><th></th></tr></thead><tbody>
-{% for f in pagination %}<tr><td>{{ f.id }}</td><td>{{ f.client }}</td><td>{{ f.dateVente|date('Y-m-d') }}</td><td>{{ f.montantTotal|number_format(2) }}</td><td>
-<a class="btn btn-sm btn-secondary" href="{{ path('app_facture_vente_show',{id:f.id}) }}">Voir</a>
-<a class="btn btn-sm btn-dark" href="{{ path('app_facture_vente_pdf',{id:f.id}) }}" target="_blank">PDF</a>
-</td></tr>{% endfor %}
-</tbody></table>
-{{ knp_pagination_render(pagination) }}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Factures de Ventes</h1>
+        <p class="page-subtitle">Gestion de la facturation avec vos clients</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_facture_vente_new') }}" class="btn-primary">
+            <i class="bi bi-receipt-cutoff"></i> Nouvelle facture
+        </a>
+    </div>
+</div>
+
+<div class="table-card" data-aos="fade-up" data-aos-delay="100">
+    <div class="table-card-header">
+        <div>
+            <h3>Registre des Factures</h3>
+            <span class="record-count">{{ pagination.getTotalItemCount() }} résultats</span>
+        </div>
+        <div class="table-actions">
+            <div class="search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Rechercher (page)..." class="table-search" id="tableSearch"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dt-table dt-server" width="100%">
+            <thead>
+                <tr>
+                    <th>N° Facture</th>
+                    <th>Client</th>
+                    <th>Date de Vente</th>
+                    <th>Montant Total</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in pagination %}
+                <tr>
+                    <td><strong>FAC-V-{{ '%04d'|format(f.id) }}</strong></td>
+                    <td><span style="font-weight: 500;">{{ f.client }}</span></td>
+                    <td><span class="badge-status" style="background: var(--bg-hover); color: var(--text-secondary); border-radius: var(--radius-sm);"><i class="bi bi-calendar3 me-1"></i> {{ f.dateVente|date('d/m/Y') }}</span></td>
+                    <td><strong style="color: #00d68f;">{{ f.montantTotal|number_format(2, '.', ' ') }}</strong> <span style="font-size:12px; color:var(--text-muted);">TND</span></td>
+                    <td class="text-end">
+                        <div class="row-actions justify-content-end">
+                            <a href="{{ path('app_facture_vente_show', {id:f.id}) }}" class="action-btn action-view" title="Voir les détails">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a href="{{ path('app_facture_vente_pdf', {id:f.id}) }}" target="_blank" class="action-btn action-pdf" title="Télécharger le PDF" style="--btn-color: #ff4757; --btn-bg: rgba(255, 71, 87, 0.1); --btn-hover-bg: #ff4757; --btn-hover-color: white;">
+                                <i class="bi bi-file-earmark-pdf-fill"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">Aucune facture de vente trouvée.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="table-pagination-wrapper">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+</div>
 {% endblock %}

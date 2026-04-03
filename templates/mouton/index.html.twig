@@ -81,51 +81,65 @@
     </div>
 
     <!-- DataTables will handle the presentation gracefully without rendering double paginators -->
-    <table class="table dt-table dt-server" width="100%">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Race</th>
-                <th>Genre</th>
-                <th>Age</th>
-                <th>Grange</th>
-                <th class="text-end">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for mouton in pagination %}
-            <tr>
-                <td><strong>#{{ mouton.id }}</strong></td>
-                <td>{{ mouton.race }}</td>
-                <td>
-                    {% if mouton.genre|lower == 'mâle' or mouton.genre|lower == 'male' %}
-                        <span class="badge-status badge-male">Mâle</span>
-                    {% else %}
-                        <span class="badge-status badge-femelle">Femelle</span>
-                    {% endif %}
-                </td>
-                <td>{{ mouton.currentAge }} mois</td>
-                <td>{{ mouton.grange ? mouton.grange.nom : '-' }}</td>
-                <td class="text-end">
-                    <div class="row-actions justify-content-end">
-                        <a href="{{ path('app_mouton_show', {id:mouton.id}) }}" class="action-btn action-view" title="Voir">
-                            <i class="bi bi-eye-fill"></i>
-                        </a>
-                        <a href="{{ path('app_mouton_edit', {id:mouton.id}) }}" class="action-btn action-edit" title="Modifier">
-                            <i class="bi bi-pencil-fill"></i>
-                        </a>
-                        <form method="post" action="{{ path('app_mouton_delete', {id:mouton.id}) }}" class="d-inline" id="form-delete-{{ mouton.id }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_mouton_' ~ mouton.id) }}">
-                            <button type="button" class="action-btn action-delete" title="Supprimer" onclick="confirmDelete('form-delete-{{ mouton.id }}', 'le mouton #{{ mouton.id }}')">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table dt-table dt-server" width="100%">
+            <thead>
+                <tr>
+                    <th>N° Identification</th>
+                    <th>Race</th>
+                    <th>Genre</th>
+                    <th>Âge & Poids</th>
+                    <th>Santé</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in pagination %}
+                <tr>
+                    <td><strong>#{{ m.id }}</strong></td>
+                    <td><span style="font-weight: 500;">{{ m.race }}</span></td>
+                    <td>
+                        {% if m.genre == 'Mâle' %}
+                            <span class="badge-genre badge-male"><i class="bi bi-gender-male"></i> Mâle</span>
+                        {% else %}
+                            <span class="badge-genre badge-female"><i class="bi bi-gender-female"></i> Femelle</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge-status" style="background: var(--bg-hover); color: var(--text-secondary); border-radius: var(--radius-sm);"><i class="bi bi-calendar3 me-1"></i> {{ m.currentAge }} mois</span>
+                    </td>
+                    <td>
+                        {% if m.vaccins|length > 0 %}
+                            <span class="badge-status badge-success"><i class="bi bi-shield-check"></i> Vaccin: {{ m.vaccins|last.dateVaccination|date('d/m') }}</span>
+                        {% else %}
+                            <span class="badge-status badge-warning"><i class="bi bi-exclamation-triangle"></i> Aucun vaccin</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="row-actions justify-content-end">
+                            <a href="{{ path('app_mouton_show', {id:m.id}) }}" class="action-btn action-view" title="Voir la fiche détaillée">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a href="{{ path('app_mouton_edit', {id:m.id}) }}" class="action-btn action-edit" title="Modifier">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <form method="post" action="{{ path('app_mouton_delete', {id:m.id}) }}" class="d-inline" id="form-delete-mouton-{{ m.id }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_mouton_' ~ m.id) }}">
+                                <button type="button" class="action-btn action-delete" title="Supprimer" onclick="confirmDelete('form-delete-mouton-{{ m.id }}', 'le mouton #{{ m.id }}')">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">Aucun mouton trouvé correspondant à vos critères.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     
     <div class="table-pagination-wrapper">
         {{ knp_pagination_render(pagination) }}

@@ -1,3 +1,74 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Nouvelle Grange{% endblock %}
-{% block body %}<div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-success">Enregistrer</button>{{ form_end(form) }}</div></div>{% endblock %}
+
+{% block title %}{{ is_edit ? 'Modifier' : 'Nouvelle' }} Grange - FermeApp{% endblock %}
+{% block breadcrumb_current %}Granges > {{ is_edit ? 'Modifier' : 'Nouvelle' }}{% endblock %}
+
+{% set is_edit = app.request.attributes.get('_route') == 'app_grange_edit' %}
+
+{% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">{{ is_edit ? 'Modifier' : 'Nouvelle' }} Grange</h1>
+        <p class="page-subtitle">{{ is_edit ? 'Mettre à jour les informations de l\'hébergement' : 'Ajouter une nouvelle structure d\'hébergement pour votre bétail' }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_grange_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="bi bi-building-fill-add"></i> Informations de la Grange</h3>
+                <p>Veuillez définir le nom et l'emplacement de cet abri.</p>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'class': 'modern-form', 'novalidate': 'novalidate'}}) }}
+                
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Nom de la Grange</label>
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Grange Nord'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.nom) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Localisation / Emplacement</label>
+                        {{ form_widget(form.localisation, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Zone A, Secteur 2'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.localisation) }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn-primary btn-submit" type="submit">
+                        <i class="bi bi-save"></i> {{ is_edit ? 'Mettre à jour' : 'Enregistrer' }}
+                        <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
+                    </button>
+                    <a href="{{ path('app_grange_index') }}" class="btn-secondary">Annuler</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4" data-aos="fade-left" data-aos-delay="200">
+        <div class="form-card" style="background: var(--bg-hover); border: 1px dashed var(--card-border);">
+            <div class="form-card-body">
+                <h5 class="mb-3" style="color: var(--accent);"><i class="bi bi-lightbulb"></i> Conseil</h5>
+                <p class="text-secondary small mb-0">
+                    Utilisez des noms explicites pour vos granges afin de faciliter l'affectation et le suivi de vos moutons lors des inventaires ou des soins vétérinaires.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

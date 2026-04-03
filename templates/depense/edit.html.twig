@@ -1,3 +1,70 @@
 {% extends 'base.html.twig' %}
-{% block page_title %}Modifier Dépense{% endblock %}
-{% block body %}<div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-success">Mettre à jour</button>{{ form_end(form) }}</div></div>{% endblock %}
+
+{% block title %}Modifier Dépense - FermeApp{% endblock %}
+{% block breadcrumb_current %}Dépenses > Modifier{% endblock %}
+
+{% block body %}
+<div class="page-header" data-aos="fade-down">
+    <div>
+        <h1 class="page-title">Modifier la Dépense</h1>
+        <p class="page-subtitle">Mettre à jour les informations de la transaction financière</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('app_depense_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3><i class="bi bi-pencil-fill"></i> Édition de Dépense</h3>
+                <p>Correction des détails de la transaction #{{ depense.id }}</p>
+            </div>
+            <div class="form-card-body">
+                {{ form_start(form, {'attr': {'class': 'modern-form', 'novalidate': 'novalidate'}}) }}
+                
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger" style="font-size:13px; border-radius:var(--radius-sm); border:none; background:var(--danger-light); color:var(--danger);">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Description / Libellé</label>
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                    <div class="invalid-feedback d-block">{{ form_errors(form.description) }}</div>
+                </div>
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Montant (TND)</label>
+                        <div class="input-group">
+                            {{ form_widget(form.montant, {'attr': {'class': 'form-control'}}) }}
+                            <span class="input-group-text border-0" style="background:var(--bg-hover);">TND</span>
+                        </div>
+                        <div class="invalid-feedback d-block">{{ form_errors(form.montant) }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small mb-1">Date</label>
+                        {{ form_widget(form.date, {'attr': {'class': 'form-control datepicker'}}) }}
+                        <div class="invalid-feedback d-block">{{ form_errors(form.date) }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn-primary btn-submit" type="submit">
+                        <i class="bi bi-check-lg"></i> Enregistrer les modifications
+                        <div class="btn-spinner spinner-border text-light d-none" role="status" style="width: 16px; height: 16px;"></div>
+                    </button>
+                    <a href="{{ path('app_depense_index') }}" class="btn-secondary">Annuler</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
