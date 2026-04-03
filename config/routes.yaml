@@ -9,3 +9,6 @@
 
 controllers:
     resource: routing.controllers
+
+aid_routes:
+    resource: routes/aid.yaml

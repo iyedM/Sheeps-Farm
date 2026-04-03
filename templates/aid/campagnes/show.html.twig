@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ campagne.nom }}{% endblock %}
+
+{% block body %}
+<div class="page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ campagne.nom }}</h1>
+        <p class="text-muted mb-0">Tableau de bord de la campagne Aïd.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{{ path('aid_marche_new', {campagneId: campagne.id}) }}" class="btn btn-primary">Nouveau marché</a>
+        <a href="{{ path('aid_campagne_index') }}" class="btn btn-outline-secondary">Retour</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.stockInitial }}</div><div class="metric-label">Stock initial</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.moutonsVendus }}</div><div class="metric-label">Vendus</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.moutonsRestants }}</div><div class="metric-label">Restants</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.totalRecettes|number_format(0, ',', ' ') }}</div><div class="metric-label">Recettes</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.totalDepenses|number_format(0, ',', ' ') }}</div><div class="metric-label">Dépenses</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.capitalNet|number_format(0, ',', ' ') }}</div><div class="metric-label">Capital net</div></div></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-xl-5">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Ajouter un lot</h5>
+                <span class="text-muted small">Stock, âge et prix</span>
+            </div>
+            <div class="card-body">
+                {{ form_start(lotForm) }}
+                    <div class="row g-3">
+                        <div class="col-md-4">{{ form_row(lotForm.quantite) }}</div>
+                        <div class="col-md-4">{{ form_row(lotForm.ageMois) }}</div>
+                        <div class="col-md-4">{{ form_row(lotForm.prixUnitaire) }}</div>
+                    </div>
+                    <button class="btn btn-primary mt-3">Ajouter le lot</button>
+                {{ form_end(lotForm) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">Lots</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Quantité</th>
+                            <th>Âge</th>
+                            <th>Prix unitaire</th>
+                            <th>Valeur</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lot in campagne.lots %}
+                            <tr>
+                                <td>{{ lot.quantite }}</td>
+                                <td>{{ lot.ageMois }} mois</td>
+                                <td>{{ lot.prixUnitaire|number_format(0, ',', ' ') }}</td>
+                                <td>{{ (lot.quantite * lot.prixUnitaire)|number_format(0, ',', ' ') }}</td>
+                                <td class="text-end"><a href="{{ path('aid_lot_delete', {campagneId: campagne.id, id: lot.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce lot ?')">Supprimer</a></td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="5" class="text-center text-muted py-4">Aucun lot ajouté.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Ajouter une dépense</h5>
+                <span class="text-muted small">Frais de campagne</span>
+            </div>
+            <div class="card-body">
+                {{ form_start(depenseForm) }}
+                    <div class="row g-3">
+                        <div class="col-md-7">{{ form_row(depenseForm.libelle) }}</div>
+                        <div class="col-md-5">{{ form_row(depenseForm.montant) }}</div>
+                        <div class="col-12">{{ form_row(depenseForm.date) }}</div>
+                    </div>
+                    <button class="btn btn-primary mt-3">Ajouter la dépense</button>
+                {{ form_end(depenseForm) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-7">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">Dépenses</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Libellé</th>
+                            <th>Date</th>
+                            <th>Montant</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for depense in campagne.depenses %}
+                            <tr>
+                                <td>{{ depense.libelle }}</td>
+                                <td>{{ depense.date ? depense.date|date('d/m/Y') : '-' }}</td>
+                                <td>{{ depense.montant|number_format(0, ',', ' ') }}</td>
+                                <td class="text-end"><a href="{{ path('aid_depense_delete', {campagneId: campagne.id, id: depense.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette dépense ?')">Supprimer</a></td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="4" class="text-center text-muted py-4">Aucune dépense enregistrée.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card dashboard-card">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Marchés</h5>
+                <a href="{{ path('aid_marche_new', {campagneId: campagne.id}) }}" class="btn btn-sm btn-primary">Créer un marché</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Date</th>
+                            <th>Responsable</th>
+                            <th>Lignes</th>
+                            <th>Amenés</th>
+                            <th>Vendus</th>
+                            <th>Net</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for marche in campagne.marches %}
+                            <tr>
+                                <td>{{ marche.nom }}</td>
+                                <td>{{ marche.date ? marche.date|date('d/m/Y') : '-' }}</td>
+                                <td>{{ marche.responsable ? marche.responsable.fullName : '-' }}</td>
+                                <td>{{ marche.lignes|length }}</td>
+                                <td>{{ marche.moutonsAmenes }}</td>
+                                <td>{{ marche.moutonsVendus }}</td>
+                                <td>{{ marche.totalNet|number_format(0, ',', ' ') }}</td>
+                                <td class="text-end">
+                                    <a href="{{ path('aid_marche_show', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-sm btn-outline-primary">Détails</a>
+                                    <a href="{{ path('aid_marche_edit', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                                    <a href="{{ path('aid_marche_delete', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce marché ?')">Supprimer</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="8" class="text-center text-muted py-4">Aucun marché créé.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

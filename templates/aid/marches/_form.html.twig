@@ -1,0 +1,47 @@
+<div class="card dashboard-card">
+    <div class="card-body">
+        {{ form_start(form) }}
+            <div class="row g-3">
+                <div class="col-md-6">{{ form_row(form.nom) }}</div>
+                <div class="col-md-6">{{ form_row(form.date) }}</div>
+                <div class="col-md-6">{{ form_row(form.responsable) }}</div>
+                <div class="col-md-6">{{ form_row(form.reduction) }}</div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                <div>
+                    <h5 class="mb-1">Lots amenés au marché</h5>
+                    <p class="text-muted mb-0">Choisissez les lots disponibles et saisissez les quantités amenées puis vendues.</p>
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-add-sublot" data-collection-holder-class=".collection-holder">
+                    <i class="bi bi-plus-lg me-2"></i> Ajouter un lot
+                </button>
+            </div>
+
+            <div class="collection-holder mt-3" data-prototype="{{ form_widget(form.lignes.vars.prototype)|e('html_attr') }}" data-index="{{ form.lignes|length }}">
+                {% for ligneForm in form.lignes %}
+                    <div class="sublot-row card border-0 shadow-sm mb-3" data-aos="fade-up">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="sublot-number text-primary fw-bold">{{ loop.index }}</div>
+                                <button type="button" class="sublot-remove btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                            <div class="sublot-fields row g-3">
+                                <div class="col-lg-6">{{ form_row(ligneForm.lot) }}</div>
+                                <div class="col-lg-3">{{ form_row(ligneForm.quantiteAmenes) }}</div>
+                                <div class="col-lg-3">{{ form_row(ligneForm.quantiteVendus) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-primary btn-submit">{{ button_label|default('Enregistrer') }}</button>
+                <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-secondary">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>

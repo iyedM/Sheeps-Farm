@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Marché {{ marche.nom }}{% endblock %}
+
+{% block body %}
+<div class="page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ marche.nom }}</h1>
+        <p class="text-muted mb-0">Marché du {{ marche.date ? marche.date|date('d/m/Y') : '-' }} • Campagne {{ campagne.nom }}</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{{ path('aid_marche_edit', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-outline-primary">Modifier</a>
+        <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-secondary">Retour à la campagne</a>
+        <a href="{{ path('aid_marche_delete', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-outline-danger" onclick="return confirm('Supprimer ce marché ?')">Supprimer</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.lignes|length }}</div><div class="metric-label">Lignes</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.moutonsAmenes }}</div><div class="metric-label">Amenés</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.moutonsVendus }}</div><div class="metric-label">Vendus</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.reductionValue|number_format(0, ',', ' ') }}</div><div class="metric-label">Réduction</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.totalNet|number_format(0, ',', ' ') }}</div><div class="metric-label">Net</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.responsable ? marche.responsable.fullName : '—' }}</div><div class="metric-label">Responsable</div></div></div>
+</div>
+
+<div class="card dashboard-card mb-4">
+    <div class="card-header bg-transparent border-0">
+        <h5 class="mb-0">Lignes de lots</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Lot</th>
+                    <th>Quantité</th>
+                    <th>Vendus</th>
+                    <th>Restant lot</th>
+                    <th>Prix unitaire</th>
+                    <th>Total ligne</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ligne in marche.lignes %}
+                    <tr>
+                        <td>Lot #{{ ligne.lot.id }}</td>
+                        <td>{{ ligne.quantiteAmenes }}</td>
+                        <td>{{ ligne.quantiteVendus }}</td>
+                        <td>{{ ligne.lot.quantiteRestante }}</td>
+                        <td>{{ ligne.lot.prixUnitaire|number_format(0, ',', ' ') }}</td>
+                        <td>{{ ligne.montantLigne|number_format(0, ',', ' ') }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" class="text-center text-muted py-4">Aucune ligne ajoutée.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card dashboard-card">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4"><div class="metric-card"><div class="metric-value">{{ campagne.stockInitial }}</div><div class="metric-label">Stock initial campagne</div></div></div>
+            <div class="col-md-4"><div class="metric-card"><div class="metric-value">{{ campagne.moutonsRestants }}</div><div class="metric-label">Restant campagne</div></div></div>
+            <div class="col-md-4"><div class="metric-card"><div class="metric-value">{{ campagne.capitalNet|number_format(0, ',', ' ') }}</div><div class="metric-label">Capital net campagne</div></div></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

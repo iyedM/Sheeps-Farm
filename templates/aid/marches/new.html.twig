@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau marché Aïd{% endblock %}
+
+{% block body %}
+<div class="page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Nouveau marché</h1>
+        <p class="text-muted mb-0">Créez un nouveau marché pour la campagne {{ campagne.nom }}.</p>
+    </div>
+    <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-secondary">Retour</a>
+</div>
+
+{% include 'aid/marches/_form.html.twig' with { form: form, campagne: campagne, button_label: 'Créer le marché' } %}
+{% endblock %}

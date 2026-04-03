@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Marketplace Aïd{% endblock %}
+
+{% block body %}
+<div class="page-header mb-4">
+    <div>
+        <h1 class="h3 mb-1">Marketplace Aïd</h1>
+        <p class="text-muted mb-0">Pilotez vos campagnes Aïd, lots, dépenses et marchés.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ path('aid_campagne_new') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i> Nouvelle campagne
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for campagne in campagnes %}
+        <div class="col-12 col-lg-6 col-xxl-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="mb-1">{{ campagne.nom }}</h5>
+                            <div class="text-muted small">Créée le {{ campagne.createdAt ? campagne.createdAt|date('d/m/Y') : '-' }}</div>
+                        </div>
+                        <span class="badge text-bg-primary">{{ campagne.moutonsRestants }} restants</span>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.stockInitial }}</div><div class="metric-label">Stock initial</div></div></div>
+                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.moutonsVendus }}</div><div class="metric-label">Vendus</div></div></div>
+                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.totalRecettes|number_format(0, ',', ' ') }}</div><div class="metric-label">Recettes</div></div></div>
+                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.capitalNet|number_format(0, ',', ' ') }}</div><div class="metric-label">Capital net</div></div></div>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-primary btn-sm">Ouvrir</a>
+                        <a href="{{ path('aid_campagne_delete', {id: campagne.id}) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer cette campagne ?')">Supprimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body text-center py-5">
+                    <h5 class="mb-2">Aucune campagne pour le moment</h5>
+                    <p class="text-muted mb-4">Créez votre première campagne Aïd pour suivre les lots, les dépenses et les marchés.</p>
+                    <a href="{{ path('aid_campagne_new') }}" class="btn btn-primary">Créer une campagne</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
