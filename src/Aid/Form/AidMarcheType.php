@@ -24,12 +24,10 @@ class AidMarcheType extends AbstractType
         $builder
             ->add('nom', TextType::class)
             ->add('date', DateType::class, ['widget' => 'single_text', 'input' => 'datetime_immutable'])
-            ->add('responsable', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => fn (User $user) => $user->getFullName() ?: $user->getEmail(),
-                'placeholder' => 'Choisir un responsable',
+            ->add('responsable', TextType::class, [
                 'required' => false,
-                'attr' => ['class' => 'select2-enabled'],
+                'label' => 'Responsable (Nom)',
+                'attr' => ['placeholder' => 'Nom du responsable...'],
             ])
             ->add('reduction', MoneyType::class, ['currency' => 'TND', 'required' => false])
             ->add('lignes', CollectionType::class, [

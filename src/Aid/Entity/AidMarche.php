@@ -40,9 +40,8 @@ class AidMarche
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?AidCampagne $campagne = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $responsable = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $responsable = null;
 
     /** @var Collection<int, AidMarcheLigne> */
     #[ORM\OneToMany(mappedBy: 'marche', targetEntity: AidMarcheLigne::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -142,12 +141,12 @@ class AidMarche
         return $this;
     }
 
-    public function getResponsable(): ?User
+    public function getResponsable(): ?string
     {
         return $this->responsable;
     }
 
-    public function setResponsable(?User $responsable): static
+    public function setResponsable(?string $responsable): static
     {
         $this->responsable = $responsable;
 

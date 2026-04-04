@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { margin: 0; }
+        body { font-family: 'Helvetica', sans-serif; color: #1e293b; line-height: 1.5; font-size: 11px; margin: 0; padding: 0; }
+        
+        /* ── Header ── */
+        .header { background-color: #0D1426; color: white; padding: 40px 50px; position: relative; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+        .header .subtitle { opacity: 0.6; font-size: 12px; margin-top: 5px; }
+        .header .tag { position: absolute; top: 40px; right: 50px; background: #00D68F; color: #0D1426; padding: 4px 12px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+
+        /* ── Content ── */
+        .container { padding: 40px 50px; }
+        
+        /* ── KPI Grid ── */
+        .kpi-row { margin-bottom: 30px; }
+        .kpi-card { float: left; width: 23%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-right: 2%; }
+        .kpi-card:last-child { margin-right: 0; }
+        .kpi-card .label { font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: bold; margin-bottom: 5px; }
+        .kpi-card .value { font-size: 16px; font-weight: 800; color: #0f172a; }
+        .kpi-card.highlight { background: #00D68F15; border-color: #00D68F; }
+        .kpi-card.highlight .value { color: #00D68F; }
+        .clear { clear: both; }
+
+        /* ── Table Section ── */
+        .section-header { font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        
+        table.sales-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table.sales-table th { background: #f1f5f9; color: #475569; padding: 12px 15px; text-align: left; font-size: 9px; text-transform: uppercase; font-weight: bold; }
+        table.sales-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; }
+        table.sales-table .lot-id { font-weight: bold; color: #00A3FF; }
+        table.sales-table .amount { font-weight: 800; text-align: right; }
+
+        /* ── Summary Block ── */
+        .grand-summary { margin-top: 50px; background: #0D1426; color: white; border-radius: 12px; padding: 30px; position: relative; overflow: hidden; }
+        .grand-summary .total-label { font-size: 11px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.1em; }
+        .grand-summary .total-value { font-size: 32px; font-weight: 800; color: #00D68F; margin-top: 5px; }
+        .grand-summary .side-info { float: right; text-align: right; margin-top: 10px; }
+        
+        /* ── Footer ── */
+        .footer { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 9px; color: #94a3b8; }
+        .footer .page-number:after { content: counter(page); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="tag">AID-REPORT-2026</div>
+        <h1>{{ marche.nom|upper }}</h1>
+        <div class="subtitle">Rapport Analytique de Marché • Campagne : {{ campagne.nom }}</div>
+    </div>
+
+    <div class="container">
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="label">Date d'Opération</div>
+                <div class="value">{{ marche.date ? marche.date|date('d/m/Y') : 'N/A' }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Volume Écoulé</div>
+                <div class="value">{{ marche.moutonsVendus }} / {{ marche.moutonsAmenes }} <small style="font-size: 8px; opacity: 0.5;">TÊTES</small></div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Responsable</div>
+                <div class="value" style="font-size: 13px;">{{ marche.responsable ?: 'N/A' }}</div>
+            </div>
+            <div class="kpi-card highlight">
+                <div class="label">Gain Brut</div>
+                <div class="value">{{ (marche.totalRecettes/1000)|number_format(1) }}k <small style="font-size: 8px;">TND</small></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="section-header">Décomposition Analytique des Flux</div>
+        <table class="sales-table">
+            <thead>
+                <tr>
+                    <th width="15%">Lot</th>
+                    <th width="15%">Amenés</th>
+                    <th width="15%">Vendus</th>
+                    <th width="15%">Performance</th>
+                    <th width="20%">Prix Unitaire</th>
+                    <th width="20%" style="text-align: right;">Total Brut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ligne in marche.lignes %}
+                    <tr>
+                        <td class="lot-id">#{{ ligne.lot.id }}</td>
+                        <td>{{ ligne.quantiteAmenes }} units</td>
+                        <td>{{ ligne.quantiteVendus }} units</td>
+                        <td>
+                            <span style="color: {{ ligne.quantiteVendus == ligne.quantiteAmenes ? '#00D68F' : '#0f172a' }}; font-weight: bold;">
+                                {{ ligne.quantiteAmenes > 0 ? (ligne.quantiteVendus / ligne.quantiteAmenes * 100)|round : 0 }}%
+                            </span>
+                        </td>
+                        <td>{{ ligne.prixUnitaire|number_format(0) }} TND</td>
+                        <td class="amount">{{ (ligne.quantiteVendus * ligne.prixUnitaire)|number_format(0, ',', ' ') }} TND</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="grand-summary">
+            <div class="side-info">
+                <div class="total-label" style="color: #ef4444; opacity: 1;">Remises Accordées</div>
+                <div style="font-size: 18px; font-weight: bold; color: #ef4444;">- {{ marche.reductionValue|number_format(0) }} TND</div>
+                <div style="margin-top: 10px;">
+                    <div class="total-label">Taux Directeurs 2026</div>
+                    <div style="font-size: 10px; opacity: 0.5;">Commission - 0.0% | Taxe - N/A</div>
+                </div>
+            </div>
+            <div>
+                <div class="total-label">Performance Nette Consolidée</div>
+                <div class="total-value">{{ marche.totalNet|number_format(0, ',', ' ') }} <small style="font-size: 14px; vertical-align: middle;">TND</small></div>
+                <div style="margin-top: 5px; font-size: 10px; opacity: 0.6;">Volume liquidé : {{ marche.moutonsVendus }} têtes | Stock restant lot : {{ marche.moutonsAmenes - marche.moutonsVendus }} têtes</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        FermeApp Intelligence • Rapport Interne de Performance • Généré le {{ "now"|date('d/m/Y H:i') }} • Page <span class="page-number"></span>
+    </div>
+</body>
+</html>

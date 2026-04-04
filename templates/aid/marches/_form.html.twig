@@ -1,5 +1,9 @@
-<div class="card dashboard-card">
-    <div class="card-body">
+<div class="form-card" data-aos="fade-up" data-aos-delay="100">
+    <div class="form-card-header">
+        <h3>Informations du marché</h3>
+        <p>Renseignez le responsable et les lots amenés avec les quantités vendues.</p>
+    </div>
+    <div class="form-card-body">
         {{ form_start(form) }}
             <div class="row g-3">
                 <div class="col-md-6">{{ form_row(form.nom) }}</div>
@@ -10,21 +14,21 @@
 
             <div class="mt-4 d-flex justify-content-between align-items-center gap-2 flex-wrap">
                 <div>
-                    <h5 class="mb-1">Lots amenés au marché</h5>
-                    <p class="text-muted mb-0">Choisissez les lots disponibles et saisissez les quantités amenées puis vendues.</p>
+                    <h5 class="mb-1">Lignes de lots</h5>
+                    <p class="text-muted mb-0">Ajoutez une ligne par lot: quantité amenée et quantité vendue.</p>
                 </div>
-                <button type="button" class="btn btn-outline-primary btn-add-sublot" data-collection-holder-class=".collection-holder">
+                <button type="button" class="btn-secondary btn-add-sublot" data-collection-holder-class=".collection-holder">
                     <i class="bi bi-plus-lg me-2"></i> Ajouter un lot
                 </button>
             </div>
 
             <div class="collection-holder mt-3" data-prototype="{{ form_widget(form.lignes.vars.prototype)|e('html_attr') }}" data-index="{{ form.lignes|length }}">
                 {% for ligneForm in form.lignes %}
-                    <div class="sublot-row card border-0 shadow-sm mb-3" data-aos="fade-up">
-                        <div class="card-body">
+                    <div class="sublot-row mb-3" data-aos="fade-up">
+                        <div class="form-card-body" style="border:1px solid var(--border-color); border-radius:var(--radius-md);">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="sublot-number text-primary fw-bold">{{ loop.index }}</div>
-                                <button type="button" class="sublot-remove btn btn-sm btn-outline-danger">
+                                <button type="button" class="sublot-remove action-btn action-delete" title="Retirer la ligne">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
@@ -39,8 +43,8 @@
             </div>
 
             <div class="mt-4 d-flex gap-2">
-                <button class="btn btn-primary btn-submit">{{ button_label|default('Enregistrer') }}</button>
-                <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-secondary">Annuler</a>
+                <button class="btn-primary btn-submit">{{ button_label|default('Enregistrer') }}</button>
+                <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn-secondary">Annuler</a>
             </div>
         {{ form_end(form) }}
     </div>

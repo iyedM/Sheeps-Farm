@@ -1,27 +1,46 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Nouvelle campagne Aïd{% endblock %}
+{% block breadcrumb_current %}Marketplace Aïd > Nouvelle campagne{% endblock %}
 
 {% block body %}
-<div class="page-header mb-4">
+<div class="page-header" data-aos="fade-down">
     <div>
-        <h1 class="h3 mb-1">Nouvelle campagne Aïd</h1>
-        <p class="text-muted mb-0">Définissez la campagne qui centralise vos ventes Aïd.</p>
+        <h1 class="page-title">Nouvelle campagne Aïd</h1>
+        <p class="page-subtitle">Définissez une campagne pour centraliser lots, dépenses et marchés.</p>
     </div>
-    <a href="{{ path('aid_campagne_index') }}" class="btn btn-outline-secondary">Retour</a>
+    <div class="page-actions">
+        <a href="{{ path('aid_campagne_index') }}" class="btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
 </div>
 
-<div class="card dashboard-card">
-    <div class="card-body">
-        {{ form_start(form) }}
-            <div class="row g-3">
-                <div class="col-12 col-lg-8">{{ form_row(form.nom) }}</div>
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h3>Informations de campagne</h3>
+                <p>Donnez un nom clair à votre campagne Aïd.</p>
             </div>
-            <div class="mt-4 d-flex gap-2">
-                <button class="btn btn-primary">Créer</button>
-                <a href="{{ path('aid_campagne_index') }}" class="btn btn-outline-secondary">Annuler</a>
+            <div class="form-card-body">
+                {{ form_start(form) }}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label text-muted small mb-1">Nom de la campagne</label>
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Aïd 2026'}}) }}
+                            <div class="invalid-feedback d-block">{{ form_errors(form.nom) }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button class="btn-primary btn-submit" type="submit">
+                            <i class="bi bi-save"></i> Créer
+                        </button>
+                        <a href="{{ path('aid_campagne_index') }}" class="btn-secondary">Annuler</a>
+                    </div>
+                {{ form_end(form) }}
             </div>
-        {{ form_end(form) }}
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,14 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Nouveau marché Aïd{% endblock %}
+{% block breadcrumb_current %}Marketplace Aïd > {{ campagne.nom }} > Nouveau marché{% endblock %}
 
 {% block body %}
-<div class="page-header mb-4">
+<div class="page-header" data-aos="fade-down">
     <div>
-        <h1 class="h3 mb-1">Nouveau marché</h1>
-        <p class="text-muted mb-0">Créez un nouveau marché pour la campagne {{ campagne.nom }}.</p>
+        <h1 class="page-title">Nouveau marché</h1>
+        <p class="page-subtitle">Créez un marché pour la campagne {{ campagne.nom }}.</p>
     </div>
-    <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-secondary">Retour</a>
+    <div class="page-actions">
+        <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+    </div>
 </div>
 
 {% include 'aid/marches/_form.html.twig' with { form: form, campagne: campagne, button_label: 'Créer le marché' } %}

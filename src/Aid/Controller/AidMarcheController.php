@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 #[Route('/marketplace/aid')]
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
@@ -58,6 +60,30 @@ class AidMarcheController extends AbstractController
         $this->addFlash('success', 'Marché supprimé.');
 
         return $this->redirectToRoute('aid_campagne_show', ['id' => $campagneId]);
+    }
+
+    #[Route('/{campagneId}/marche/{id}/pdf', name: 'aid_marche_pdf', methods: ['GET'])]
+    public function exportPdf(AidMarche $marche): Response
+    {
+        $options = new Options();
+        $options->set('defaultFont', 'Helvetica');
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        
+        $html = $this->renderView('aid/marches/pdf.html.twig', [
+            'marche' => $marche,
+            'campagne' => $marche->getCampagne()
+        ]);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return new Response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="rapport-marche-' . $marche->getNom() . '.pdf"'
+        ]);
     }
 
     private function handleForm(Request $request, EntityManagerInterface $em, AidCampagne $campagne, AidMarche $marche, string $template, string $successMessage): Response

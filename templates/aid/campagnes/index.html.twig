@@ -1,57 +1,147 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Marketplace Aïd{% endblock %}
+{% block title %}Marketplace Aïd | FermeApp{% endblock %}
+{% block breadcrumb_current %}Marketplace Aïd{% endblock %}
 
 {% block body %}
-<div class="page-header mb-4">
-    <div>
-        <h1 class="h3 mb-1">Marketplace Aïd</h1>
-        <p class="text-muted mb-0">Pilotez vos campagnes Aïd, lots, dépenses et marchés.</p>
+{% set totalCampagnes = campagnes|length %}
+{% set totalStock = 0 %}
+{% set totalVendus = 0 %}
+{% set totalNet = 0 %}
+{% for c in campagnes %}
+    {% set totalStock = totalStock + c.stockInitial %}
+    {% set totalVendus = totalVendus + c.moutonsVendus %}
+    {% set totalNet = totalNet + c.capitalNet %}
+{% endfor %}
+
+<div class="premium-surface">
+    <!-- Panoramic Corporate Header -->
+    <div class="aid-hero-card mb-5" data-aos="fade-down" style="background: linear-gradient(135deg, #0D1426 0%, #1a253a 100%); color: white; padding: 48px; border-radius: 32px; box-shadow: 0 30px 60px -12px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div class="aid-hero-main" style="max-width: 600px;">
+            <div class="d-flex align-items-center gap-2 mb-2 opacity-50 font-xs ls-wide text-uppercase fw-800">
+                <i class="bi bi-grid-3x3-gap"></i> Marketplace Aïd <span class="badge bg-primary-light text-primary px-2 py-1 ms-2" style="font-size: 8px;">SYSTÈME CENTRAL</span>
+            </div>
+            <h1 class="mb-2" style="font-size: 3rem; font-weight: 850; letter-spacing: -0.05em; line-height: 1;">Hub des Campagnes</h1>
+            <p class="mb-0 opacity-50" style="font-size: 16px;">Supervision globale des flux d'acquisition, de la performance des marchés et de la rentabilité consolidée.</p>
+        </div>
+        <div class="aid-hero-actions">
+            <a href="{{ path('aid_campagne_new') }}" class="btn btn-premium-add rounded-pill px-4 py-3 shadow-lg">
+                <i class="bi bi-plus-lg me-2"></i> Lancer une Campagne
+            </a>
+        </div>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{{ path('aid_campagne_new') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-2"></i> Nouvelle campagne
-        </a>
-    </div>
-</div>
 
-<div class="row g-4">
-    {% for campagne in campagnes %}
-        <div class="col-12 col-lg-6 col-xxl-4">
-            <div class="card dashboard-card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <h5 class="mb-1">{{ campagne.nom }}</h5>
-                            <div class="text-muted small">Créée le {{ campagne.createdAt ? campagne.createdAt|date('d/m/Y') : '-' }}</div>
-                        </div>
-                        <span class="badge text-bg-primary">{{ campagne.moutonsRestants }} restants</span>
-                    </div>
-
-                    <div class="row g-3 mb-3">
-                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.stockInitial }}</div><div class="metric-label">Stock initial</div></div></div>
-                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.moutonsVendus }}</div><div class="metric-label">Vendus</div></div></div>
-                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.totalRecettes|number_format(0, ',', ' ') }}</div><div class="metric-label">Recettes</div></div></div>
-                        <div class="col-6"><div class="metric-card"><div class="metric-value">{{ campagne.capitalNet|number_format(0, ',', ' ') }}</div><div class="metric-label">Capital net</div></div></div>
-                    </div>
-
-                    <div class="d-flex gap-2 flex-wrap">
-                        <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-primary btn-sm">Ouvrir</a>
-                        <a href="{{ path('aid_campagne_delete', {id: campagne.id}) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer cette campagne ?')">Supprimer</a>
-                    </div>
-                </div>
+    <!-- Consolidated Metric Hub -->
+    <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="100">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4 text-center">
+                <div class="glass-metric-icon bg-info-light text-info mx-auto"><i class="bi bi-calendar-check"></i></div>
+                <div class="h3 fw-850 mb-1">{{ totalCampagnes }}</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Cycles Actifs</div>
             </div>
         </div>
-    {% else %}
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4 text-center">
+                <div class="glass-metric-icon bg-primary-light text-primary mx-auto"><i class="bi bi-box-seam"></i></div>
+                <div class="h3 fw-850 mb-1">{{ totalStock }}</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Stock Engagé</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4 text-center">
+                <div class="glass-metric-icon bg-success-light text-success mx-auto"><i class="bi bi-cart-check"></i></div>
+                <div class="h3 fw-850 mb-1">{{ totalVendus }}</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Total Ventes</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4 text-center highlight-accent">
+                <div class="glass-metric-icon bg-success-light text-success mx-auto"><i class="bi bi-bank"></i></div>
+                <div class="h3 fw-850 mb-1 text-success">{{ (totalNet/1000)|number_format(1) }}k</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Trésorerie Nette</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Campaign Feed -->
+    <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="150">
         <div class="col-12">
-            <div class="card dashboard-card">
-                <div class="card-body text-center py-5">
-                    <h5 class="mb-2">Aucune campagne pour le moment</h5>
-                    <p class="text-muted mb-4">Créez votre première campagne Aïd pour suivre les lots, les dépenses et les marchés.</p>
-                    <a href="{{ path('aid_campagne_new') }}" class="btn btn-primary">Créer une campagne</a>
+            <div class="premium-card-glass p-0 overflow-hidden">
+                <div class="p-4 border-bottom bg-light-subtle d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 fw-800">Flux des Campagnes</h5>
+                    <span class="text-muted font-xs fw-bold uppercase">{{ totalCampagnes }} ENREGISTREMENTS</span>
                 </div>
+                
+                {% if totalCampagnes > 0 %}
+                    <div class="table-responsive">
+                        <table class="table align-middle table-hover mb-0">
+                            <thead class="bg-light-subtle">
+                                <tr>
+                                    <th class="ps-4 py-3 font-xs text-uppercase ls-wide text-muted">Désignation</th>
+                                    <th class="py-3 font-xs text-uppercase ls-wide text-muted">Statut Stock</th>
+                                    <th class="py-3 font-xs text-uppercase ls-wide text-muted">Flux Marchés</th>
+                                    <th class="py-3 font-xs text-uppercase ls-wide text-muted">Performance Financière</th>
+                                    <th class="text-end pe-4 font-xs text-uppercase ls-wide text-muted">Actions Stratégiques</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set colors = ['#00A3FF', '#00D68F', '#7C3AED', '#FF8C00'] %}
+                                {% for campagne in campagnes %}
+                                    <tr class="transition-all">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-800 text-white shadow-sm" style="width: 42px; height: 42px; background: {{ colors[loop.index0 % 4] }}; font-size: 14px;">
+                                                    {{ campagne.nom|slice(0, 1)|upper }}
+                                                </div>
+                                                <div>
+                                                    <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="h6 m-0 fw-800 text-primary text-decoration-none hover-underline">{{ campagne.nom }}</a>
+                                                    <div class="font-xs text-muted">Lancée le {{ campagne.createdAt|date('d M Y') }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                {% set p = campagne.stockInitial > 0 ? (campagne.moutonsVendus / campagne.stockInitial * 100) : 0 %}
+                                                <span class="fw-800">{{ campagne.moutonsVendus }}</span> <small class="text-muted">/</small> <span class="text-muted fw-bold">{{ campagne.stockInitial }}</span>
+                                            </div>
+                                            <div class="progress" style="height: 4px; width: 120px; border-radius: 10px;">
+                                                <div class="progress-bar {{ p > 80 ? 'bg-success' : 'bg-primary' }}" style="width: {{ p }}%"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="badge bg-light text-dark rounded-pill px-3">{{ campagne.marches|length }} points de vente</div>
+                                        </td>
+                                        <td>
+                                            <div class="h6 m-0 fw-850 text-success">{{ (campagne.capitalNet/1000)|number_format(1) }}k <small class="font-xs">TND</small></div>
+                                            <div class="font-xs opacity-50">{{ (campagne.totalRecettes/1000)|number_format(1) }}k Chiffre d'affaires</div>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-sm btn-icon bg-primary-light text-primary rounded-pill px-3 fw-bold">
+                                                    <i class="bi bi-eye"></i> Piloter
+                                                </a>
+                                                <a href="{{ path('aid_campagne_delete', {id: campagne.id}) }}" class="btn btn-icon btn-sm text-danger opacity-25 hover-opacity-100" onclick="return confirm('?')">
+                                                    <i class="bi bi-trash3"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-4 d-inline-block text-primary opacity-10"><i class="bi bi-shop-window display-1"></i></div>
+                        <h4 class="fw-850">Prêt pour votre prochaine saison ?</h4>
+                        <p class="text-muted max-w-lg mx-auto mb-5">Aucune campagne n'est enregistrée. Lancez votre première opération pour bénéficier de l'analytique temps réel.</p>
+                        <a href="{{ path('aid_campagne_new') }}" class="btn btn-premium-add px-5 py-3 rounded-pill">
+                            <i class="bi bi-lightning-charge-fill me-2 text-warning"></i> Lancer l'opération
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
-    {% endfor %}
+    </div>
 </div>
 {% endblock %}

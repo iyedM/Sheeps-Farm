@@ -1,31 +1,32 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Marché {{ marche.nom }}{% endblock %}
+{% block breadcrumb_current %}Marketplace Aïd > {{ campagne.nom }} > {{ marche.nom }}{% endblock %}
 
 {% block body %}
-<div class="page-header mb-4">
+<div class="page-header" data-aos="fade-down">
     <div>
-        <h1 class="h3 mb-1">{{ marche.nom }}</h1>
-        <p class="text-muted mb-0">Marché du {{ marche.date ? marche.date|date('d/m/Y') : '-' }} • Campagne {{ campagne.nom }}</p>
+        <h1 class="page-title">{{ marche.nom }}</h1>
+        <p class="page-subtitle">Marché du {{ marche.date ? marche.date|date('d/m/Y') : '-' }} • Campagne {{ campagne.nom }}</p>
     </div>
-    <div class="d-flex gap-2 flex-wrap">
-        <a href="{{ path('aid_marche_edit', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-outline-primary">Modifier</a>
-        <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn btn-outline-secondary">Retour à la campagne</a>
-        <a href="{{ path('aid_marche_delete', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-outline-danger" onclick="return confirm('Supprimer ce marché ?')">Supprimer</a>
+    <div class="page-actions">
+        <a href="{{ path('aid_marche_pdf', {campagneId: campagne.id, id: marche.id}) }}" class="btn-primary" target="_blank"><i class="bi bi-file-earmark-pdf me-1"></i> Générer Rapport PDF</a>
+        <a href="{{ path('aid_marche_edit', {campagneId: campagne.id, id: marche.id}) }}" class="btn-secondary"><i class="bi bi-pencil-fill"></i> Modifier</a>
+        <a href="{{ path('aid_campagne_show', {id: campagne.id}) }}" class="btn-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
     </div>
 </div>
 
-<div class="row g-4 mb-4">
+<div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="100">
     <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.lignes|length }}</div><div class="metric-label">Lignes</div></div></div>
     <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.moutonsAmenes }}</div><div class="metric-label">Amenés</div></div></div>
     <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.moutonsVendus }}</div><div class="metric-label">Vendus</div></div></div>
     <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.reductionValue|number_format(0, ',', ' ') }}</div><div class="metric-label">Réduction</div></div></div>
     <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.totalNet|number_format(0, ',', ' ') }}</div><div class="metric-label">Net</div></div></div>
-    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.responsable ? marche.responsable.fullName : '—' }}</div><div class="metric-label">Responsable</div></div></div>
+    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ marche.responsable ?: '—' }}</div><div class="metric-label">Responsable</div></div></div>
 </div>
 
-<div class="card dashboard-card mb-4">
-    <div class="card-header bg-transparent border-0">
+<div class="table-card mb-4" data-aos="fade-up" data-aos-delay="120">
+    <div class="table-card-header">
         <h5 class="mb-0">Lignes de lots</h5>
     </div>
     <div class="table-responsive">
@@ -58,7 +59,7 @@
     </div>
 </div>
 
-<div class="card dashboard-card">
+<div class="table-card" data-aos="fade-up" data-aos-delay="140">
     <div class="card-body">
         <div class="row g-3">
             <div class="col-md-4"><div class="metric-card"><div class="metric-value">{{ campagne.stockInitial }}</div><div class="metric-label">Stock initial campagne</div></div></div>

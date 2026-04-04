@@ -1,172 +1,269 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ campagne.nom }}{% endblock %}
+{% block title %}{{ campagne.nom }} | Marketplace Aïd{% endblock %}
+{% block breadcrumb_current %}Marketplace Aïd > {{ campagne.nom }}{% endblock %}
 
 {% block body %}
-<div class="page-header mb-4">
-    <div>
-        <h1 class="h3 mb-1">{{ campagne.nom }}</h1>
-        <p class="text-muted mb-0">Tableau de bord de la campagne Aïd.</p>
-    </div>
-    <div class="d-flex gap-2 flex-wrap">
-        <a href="{{ path('aid_marche_new', {campagneId: campagne.id}) }}" class="btn btn-primary">Nouveau marché</a>
-        <a href="{{ path('aid_campagne_index') }}" class="btn btn-outline-secondary">Retour</a>
-    </div>
-</div>
+{% set percentVendu = campagne.stockInitial > 0 ? (campagne.moutonsVendus / campagne.stockInitial * 100) : 0 %}
 
-<div class="row g-4 mb-4">
-    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.stockInitial }}</div><div class="metric-label">Stock initial</div></div></div>
-    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.moutonsVendus }}</div><div class="metric-label">Vendus</div></div></div>
-    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.moutonsRestants }}</div><div class="metric-label">Restants</div></div></div>
-    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.totalRecettes|number_format(0, ',', ' ') }}</div><div class="metric-label">Recettes</div></div></div>
-    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.totalDepenses|number_format(0, ',', ' ') }}</div><div class="metric-label">Dépenses</div></div></div>
-    <div class="col-6 col-xl-2"><div class="metric-card"><div class="metric-value">{{ campagne.capitalNet|number_format(0, ',', ' ') }}</div><div class="metric-label">Capital net</div></div></div>
-</div>
-
-<div class="row g-4">
-    <div class="col-12 col-xl-5">
-        <div class="card dashboard-card h-100">
-            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Ajouter un lot</h5>
-                <span class="text-muted small">Stock, âge et prix</span>
+<div class="premium-surface">
+    <!-- Panoramic Hero Strategic Board -->
+    <div class="aid-hero-card mb-5" data-aos="fade-down" style="background: linear-gradient(135deg, #0D1426 0%, #1a253a 100%), radial-gradient(at 0% 0%, rgba(0, 214, 143, 0.15) 0px, transparent 50%); color: white; padding: 48px; border-radius: 32px; box-shadow: 0 30px 60px -12px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-end;">
+        <div class="hero-glow-blob" style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(0, 214, 143, 0.1) 0%, transparent 70%); pointer-events: none;"></div>
+        
+        <div class="aid-hero-main" style="flex: 2; min-width: 320px;">
+            <div class="d-flex align-items-center gap-2 mb-2 opacity-50 font-xs ls-wide text-uppercase fw-800">
+                <i class="bi bi-broadcast"></i> Temps Réel <span class="badge bg-success-soft text-success px-2 py-1 ms-2" style="font-size: 8px;">ACTIF</span>
             </div>
-            <div class="card-body">
-                {{ form_start(lotForm) }}
-                    <div class="row g-3">
-                        <div class="col-md-4">{{ form_row(lotForm.quantite) }}</div>
-                        <div class="col-md-4">{{ form_row(lotForm.ageMois) }}</div>
-                        <div class="col-md-4">{{ form_row(lotForm.prixUnitaire) }}</div>
+            <h1 class="mb-2" style="font-size: 3.5rem; font-weight: 850; letter-spacing: -0.05em; line-height: 0.9;">{{ campagne.nom }}</h1>
+            <p class="mb-4 opacity-50" style="font-size: 16px; max-width: 450px;">Pilotage analytique de la campagne Aïd 2026. Suivi des flux d'acquisition et indicateurs de performance commerciale.</p>
+
+            <div class="hero-stock-console p-4 rounded-4" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(20px);">
+                <div class="d-flex justify-content-between align-items-baseline mb-2">
+                    <span class="text-white-50 font-xs fw-bold text-uppercase ls-tight">Ventes consolidées</span>
+                    <span class="h4 text-white m-0 font-numeric fw-800">{{ campagne.moutonsVendus }}<small class="opacity-25 h6 ps-2">/{{ campagne.stockInitial }}</small></span>
+                </div>
+                <div class="hero-progress-track" style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden;">
+                    <div class="hero-progress-fill" style="width:{{ percentVendu }}%; height: 100%; background: linear-gradient(90deg, #00D68F, #00A3FF); box-shadow: 0 0 15px rgba(0,214,143,0.3);"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aid-hero-extra d-flex gap-4" style="flex: 1; justify-content: flex-end;">
+            <div class="text-end">
+                <div class="text-white-50 font-xs text-uppercase ls-wide mb-1">Total Net</div>
+                <div class="h2 m-0 fw-850 text-success text-glow">{{ (campagne.capitalNet/1000)|number_format(1) }}k <small class="h6">TND</small></div>
+            </div>
+            <div class="text-end">
+                <div class="text-white-50 font-xs text-uppercase ls-wide mb-1">Couverture</div>
+                <div class="h2 m-0 fw-850 text-primary">{{ percentVendu|round }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Insights Row -->
+    <div class="row g-4 mb-5" data-aos="fade-up">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4">
+                <div class="glass-metric-icon bg-primary-light text-primary"><i class="bi bi-stack"></i></div>
+                <div class="h3 fw-850 mb-1">{{ campagne.stockInitial }}</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Capacité Initiale</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4 highlight-accent">
+                <div class="glass-metric-icon bg-success-light text-success"><i class="bi bi-graph-up-arrow"></i></div>
+                <div class="h3 fw-850 mb-1 text-success">{{ campagne.moutonsVendus }}</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Ventes Validées</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4">
+                <div class="glass-metric-icon bg-danger-light text-danger"><i class="bi bi-receipt-cutoff"></i></div>
+                <div class="h3 fw-850 mb-1 text-danger">-{{ (campagne.totalDepenses/1000)|number_format(1) }}k</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Coûts d'Exploitation</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="premium-card-glass p-4">
+                <div class="glass-metric-icon bg-info-light text-info"><i class="bi bi-shop"></i></div>
+                <div class="h3 fw-850 mb-1 text-info">{{ campagne.marches|length }}</div>
+                <div class="font-xs text-muted fw-bold text-uppercase ls-wide">Canaux de Vente</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Central Data Hub -->
+    <div class="row g-4 mb-5">
+        <div class="col-xl-8">
+            <div class="premium-card-glass h-100" data-aos="fade-up" data-aos-delay="100">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="m-0 fw-800">Gestion des Flux (Lots)</h5>
+                        <p class="text-muted small m-0">Historique d'acquisition et volume par lot</p>
                     </div>
-                    <button class="btn btn-primary mt-3">Ajouter le lot</button>
-                {{ form_end(lotForm) }}
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-xl-7">
-        <div class="card dashboard-card h-100">
-            <div class="card-header bg-transparent border-0">
-                <h5 class="mb-0">Lots</h5>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Quantité</th>
-                            <th>Âge</th>
-                            <th>Prix unitaire</th>
-                            <th>Valeur</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for lot in campagne.lots %}
-                            <tr>
-                                <td>{{ lot.quantite }}</td>
-                                <td>{{ lot.ageMois }} mois</td>
-                                <td>{{ lot.prixUnitaire|number_format(0, ',', ' ') }}</td>
-                                <td>{{ (lot.quantite * lot.prixUnitaire)|number_format(0, ',', ' ') }}</td>
-                                <td class="text-end"><a href="{{ path('aid_lot_delete', {campagneId: campagne.id, id: lot.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce lot ?')">Supprimer</a></td>
-                            </tr>
-                        {% else %}
-                            <tr><td colspan="5" class="text-center text-muted py-4">Aucun lot ajouté.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+                    <button class="btn btn-premium-add rounded-pill px-4" data-bs-toggle="collapse" data-bs-target="#addLotForm">
+                        <i class="bi bi-plus-circle me-1"></i> Nouveau flux
+                    </button>
+                </div>
+                
+                <div class="collapse p-4 bg-light-subtle" id="addLotForm">
+                    {{ form_start(lotForm) }}
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="label-modern">Quantité</label>
+                                {{ form_widget(lotForm.quantite, {'attr': {'class': 'form-control rounded-3 border-0'}}) }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-modern">Âge (Mois)</label>
+                                {{ form_widget(lotForm.ageMois, {'attr': {'class': 'form-control rounded-3 border-0'}}) }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="label-modern">Prix Achat (TND)</label>
+                                {{ form_widget(lotForm.prixUnitaire, {'attr': {'class': 'form-control rounded-3 border-0'}}) }}
+                            </div>
+                        </div>
+                        <button class="btn-premium-add w-100 mt-4 py-2 rounded-3">Valider l'intégration au stock</button>
+                    {{ form_end(lotForm) }}
+                </div>
 
-    <div class="col-12 col-xl-5">
-        <div class="card dashboard-card h-100">
-            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Ajouter une dépense</h5>
-                <span class="text-muted small">Frais de campagne</span>
+                <div class="p-0">
+                    <table class="table align-middle table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4 py-3 font-xs text-uppercase ls-wide text-muted">Référence</th>
+                                <th class="py-3 font-xs text-uppercase ls-wide text-muted">Volume</th>
+                                <th class="py-3 font-xs text-uppercase ls-wide text-muted">Achat</th>
+                                <th class="py-3 font-xs text-uppercase ls-wide text-muted">Engagement</th>
+                                <th class="text-end pe-4"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lot in campagne.lots %}
+                                <tr class="transition-all">
+                                    <td class="ps-4"><span class="fw-bold text-primary">LOT #{{ lot.id }}</span></td>
+                                    <td><span class="h5 fw-850 m-0">{{ lot.quantite }}</span> <small class="text-muted">unités</small></td>
+                                    <td><span class="fw-bold">{{ lot.prixUnitaire|number_format(0, ',', ' ') }}</span> <small class="text-muted">tnd/u</small></td>
+                                    <td><span class="h6 fw-800 text-dark">{{ (lot.quantite * lot.prixUnitaire)|number_format(0, ',', ' ') }}</span> <small class="text-muted">tnd</small></td>
+                                    <td class="text-end pe-4">
+                                        <a href="{{ path('aid_lot_delete', {campagneId: campagne.id, id: lot.id}) }}" class="btn btn-icon btn-sm text-danger opacity-25 hover-opacity-100" onclick="return confirm('?')">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="card-body">
-                {{ form_start(depenseForm) }}
-                    <div class="row g-3">
-                        <div class="col-md-7">{{ form_row(depenseForm.libelle) }}</div>
-                        <div class="col-md-5">{{ form_row(depenseForm.montant) }}</div>
-                        <div class="col-12">{{ form_row(depenseForm.date) }}</div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="premium-card-glass h-100" data-aos="fade-up" data-aos-delay="200">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 fw-800">Centrale de Coûts</h5>
+                    <span class="badge bg-danger-soft text-danger fw-800">{{ campagne.depenses|length }}</span>
+                </div>
+                
+                <div class="p-4 bg-light-subtle">
+                    {{ form_start(depenseForm) }}
+                        <div class="mb-3">
+                            <label class="label-modern">Désignation</label>
+                            {{ form_widget(depenseForm.libelle, {'attr': {'class': 'form-control rounded-3 border-0', 'placeholder': 'Ex: Transport, Aliment...'}}) }}
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="label-modern">Montant (TND)</label>
+                                {{ form_widget(depenseForm.montant, {'attr': {'class': 'form-control rounded-3 border-0'}}) }}
+                            </div>
+                            <div class="col-6">
+                                <label class="label-modern">Date</label>
+                                {{ form_widget(depenseForm.date, {'attr': {'class': 'form-control rounded-3 border-0'}}) }}
+                            </div>
+                        </div>
+                        <button class="btn btn-light w-100 fw-bold border-0 text-danger rounded-3 p-2">
+                            <i class="bi bi-receipt me-1"></i> Enregistrer charge
+                        </button>
+                    {{ form_end(depenseForm) }}
+                </div>
+
+                <div class="list-group list-group-flush" style="max-height: 380px; overflow-y: auto;">
+                    {% for depense in campagne.depenses %}
+                        <div class="list-group-item bg-transparent px-4 py-3 d-flex justify-content-between align-items-center border-0 border-bottom border-light">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-3 bg-danger-light text-danger d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                    <i class="bi bi-tag-fill"></i>
+                                </div>
+                                <div style="max-width: 150px;">
+                                    <div class="fw-bold font-sm text-truncate text-dark">{{ depense.libelle }}</div>
+                                    <div class="font-xs text-muted">{{ depense.date ? depense.date|date('d/m/Y') : '-' }}</div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-800 text-danger">-{{ depense.montant|number_format(0, ',', ' ') }} <small class="font-xs">TND</small></div>
+                                <a href="{{ path('aid_depense_delete', {campagneId: campagne.id, id: depense.id}) }}" class="text-danger font-xs opacity-25 hover-opacity-100" onclick="return confirm('?')">Supprimer</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="p-5 text-center text-muted small">Aucun frais opérationnel documenté.</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="p-4 mt-auto border-top bg-danger-soft-linear">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="font-xs text-uppercase fw-800 text-danger opacity-50">Impact financier</span>
+                        <span class="h4 m-0 fw-850 text-danger">{{ campagne.totalDepenses|number_format(0, ',', ' ') }} <small class="h6">TND</small></span>
                     </div>
-                    <button class="btn btn-primary mt-3">Ajouter la dépense</button>
-                {{ form_end(depenseForm) }}
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-xl-7">
-        <div class="card dashboard-card h-100">
-            <div class="card-header bg-transparent border-0">
-                <h5 class="mb-0">Dépenses</h5>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Libellé</th>
-                            <th>Date</th>
-                            <th>Montant</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for depense in campagne.depenses %}
-                            <tr>
-                                <td>{{ depense.libelle }}</td>
-                                <td>{{ depense.date ? depense.date|date('d/m/Y') : '-' }}</td>
-                                <td>{{ depense.montant|number_format(0, ',', ' ') }}</td>
-                                <td class="text-end"><a href="{{ path('aid_depense_delete', {campagneId: campagne.id, id: depense.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette dépense ?')">Supprimer</a></td>
-                            </tr>
-                        {% else %}
-                            <tr><td colspan="4" class="text-center text-muted py-4">Aucune dépense enregistrée.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12">
-        <div class="card dashboard-card">
-            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Marchés</h5>
-                <a href="{{ path('aid_marche_new', {campagneId: campagne.id}) }}" class="btn btn-sm btn-primary">Créer un marché</a>
+    <!-- Analytical Distribution Hub -->
+    <div class="row g-4" data-aos="fade-up">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="m-0 fw-850 ls-tight">Distribution Analytique par Marché</h3>
+                    <p class="text-muted m-0">Performance transversale des points de vente actifs</p>
+                </div>
+                <a href="{{ path('aid_marche_new', {campagneId: campagne.id}) }}" class="btn btn-premium-add px-4 rounded-pill">
+                    <i class="bi bi-plus-lg me-1"></i> Ouvrir un nouveau canal
+                </a>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Date</th>
-                            <th>Responsable</th>
-                            <th>Lignes</th>
-                            <th>Amenés</th>
-                            <th>Vendus</th>
-                            <th>Net</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for marche in campagne.marches %}
-                            <tr>
-                                <td>{{ marche.nom }}</td>
-                                <td>{{ marche.date ? marche.date|date('d/m/Y') : '-' }}</td>
-                                <td>{{ marche.responsable ? marche.responsable.fullName : '-' }}</td>
-                                <td>{{ marche.lignes|length }}</td>
-                                <td>{{ marche.moutonsAmenes }}</td>
-                                <td>{{ marche.moutonsVendus }}</td>
-                                <td>{{ marche.totalNet|number_format(0, ',', ' ') }}</td>
-                                <td class="text-end">
-                                    <a href="{{ path('aid_marche_show', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-sm btn-outline-primary">Détails</a>
-                                    <a href="{{ path('aid_marche_edit', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                                    <a href="{{ path('aid_marche_delete', {campagneId: campagne.id, id: marche.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce marché ?')">Supprimer</a>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr><td colspan="8" class="text-center text-muted py-4">Aucun marché créé.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+
+            <div class="row g-4">
+                {% for marche in campagne.marches %}
+                    {% set marketPercent = marche.moutonsAmenes > 0 ? (marche.moutonsVendus / marche.moutonsAmenes * 100) : 0 %}
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                        <div class="premium-card-glass p-4 h-100 border-top-accent">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h6 class="m-0 fw-bold d-flex align-items-center gap-2">
+                                    <span class="pulse-status {{ marketPercent > 80 ? 'bg-success' : 'bg-warning' }}"></span>
+                                    {{ marche.nom }}
+                                </h6>
+                                <div class="dropdown">
+                                    <button class="btn btn-icon btn-sm bg-light rounded-circle" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
+                                    <ul class="dropdown-menu border-0 shadow-lg p-2 rounded-3">
+                                        <li><a class="dropdown-item rounded-2" href="{{ path('aid_marche_show', {campagneId: campagne.id, id: marche.id}) }}"><i class="bi bi-eye me-2 text-primary"></i> Observer</a></li>
+                                        <li><a class="dropdown-item rounded-2" href="{{ path('aid_marche_pdf', {campagneId: campagne.id, id: marche.id}) }}" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i> Rapport PDF</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item rounded-2 text-danger" href="{{ path('aid_marche_delete', {campagneId: campagne.id, id: marche.id}) }}" onclick="return confirm('?')"><i class="bi bi-trash3 me-2"></i> Supprimer</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <div class="p-3 bg-light rounded-3 text-center flex-grow-1 me-2">
+                                    <div class="font-xs text-muted mb-1">Vendus</div>
+                                    <div class="h5 m-0 fw-850">{{ marche.moutonsVendus }}</div>
+                                </div>
+                                <div class="p-3 bg-success-light rounded-3 text-center flex-grow-1">
+                                    <div class="font-xs text-success-dark mb-1">Net (TND)</div>
+                                    <div class="h5 m-0 fw-850 text-success">{{ (marche.totalNet/1000)|number_format(1) }}k</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-2 d-flex justify-content-between align-items-center">
+                                <span class="font-xs fw-bold text-muted">Écoulement Stock</span>
+                                <span class="font-xs fw-850 {{ marketPercent > 80 ? 'text-success' : 'text-primary' }}">{{ marketPercent|round }}%</span>
+                            </div>
+                            <div class="progress mb-4" style="height: 6px; border-radius: 10px; background: #eaedf2;">
+                                <div class="progress-bar {{ marketPercent > 80 ? 'bg-success' : 'bg-primary' }}" style="width: {{ marketPercent }}%"></div>
+                            </div>
+
+                            <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 10px;">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <span class="font-xs text-muted fw-bold">{{ marche.responsable ?: 'N/A' }}</span>
+                                </div>
+                                <span class="badge bg-light text-dark rounded-pill font-xs px-2">{{ marche.date ? marche.date|date('d/m/Y') : '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
