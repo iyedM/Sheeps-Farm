@@ -210,9 +210,23 @@ class AidCampagne
         return $total;
     }
 
+    public function getTotalAchat(): float
+    {
+        $total = 0.0;
+        foreach ($this->lots as $lot) {
+            $total += $lot->getQuantite() * $lot->getPrixUnitaire();
+        }
+        return $total;
+    }
+
+    public function getTotalCouts(): float
+    {
+        return $this->getTotalAchat() + $this->getTotalDepenses();
+    }
+
     public function getCapitalNet(): float
     {
-        return $this->getTotalRecettes() - $this->getTotalDepenses();
+        return $this->getTotalRecettes() - $this->getTotalCouts();
     }
 
     public function __toString(): string
